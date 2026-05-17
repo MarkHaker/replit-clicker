@@ -1,4 +1,4 @@
-/* Telegram Clicker v4 — зелёная тема, mobile-first */
+/* Telegram Clicker v5 — зелёная тема, adaptive */
 
 :root {
   --bg:          #0f1f14;
@@ -40,6 +40,13 @@ body {
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+}
+
+/* ── PC-обёртка ──────────────────────────────────────────────────── */
+#app-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 /* ── Оффлайн-оверлей ─────────────────────────────────────────────── */
@@ -163,9 +170,9 @@ body {
 #tab-clicker {
   display: flex; flex-direction: column;
   align-items: center;
-  padding: 16px 16px 80px; min-height: 100%;
+  padding: 12px 16px 24px; min-height: 100%;
 }
-.click-area { position: relative; margin: 16px 0 10px; }
+.click-area { position: relative; margin: 8px 0 6px; }
 #click-btn {
   width: 190px; height: 190px;
   border-radius: 50%; background: none; border: none;
@@ -186,7 +193,7 @@ body {
   animation: floatUp 0.85s ease forwards;
   text-shadow: 0 1px 6px rgba(0,0,0,0.6); z-index: 10; white-space: nowrap;
 }
-.clicker-info { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+.clicker-info { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
 .info-chip {
   background: var(--bg2); border: 1px solid var(--border);
   border-radius: 20px; padding: 5px 12px;
@@ -194,7 +201,7 @@ body {
 }
 .info-chip span { color: var(--accent2); }
 
-.level-progress { width: 100%; max-width: 270px; margin-top: 16px; }
+.level-progress { width: 100%; max-width: 270px; margin-top: 10px; }
 .level-bar-header {
   display: flex; justify-content: space-between;
   font-size: 0.75rem; color: var(--text-dim); margin-bottom: 5px;
@@ -203,7 +210,7 @@ body {
 .progress-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--green-light)); border-radius: 999px; transition: width 0.45s ease; }
 
 /* ── Магазин ─────────────────────────────────────────────────────── */
-#tab-shop { padding: 14px 14px 80px; }
+#tab-shop { padding: 12px 12px 24px; }
 .shop-section-title {
   font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
   letter-spacing: 0.09em; color: var(--green-light); opacity: 0.7;
@@ -238,7 +245,7 @@ body {
 .upgrade-buy-btn:not(:disabled):active { transform: scale(0.94); background: var(--green-dim); }
 
 /* ── Статистика ──────────────────────────────────────────────────── */
-#tab-stats { padding: 14px 14px 80px; }
+#tab-stats { padding: 12px 12px 24px; }
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 14px; }
 .stat-card { background: var(--bg2); border-radius: var(--radius); padding: 14px 12px; text-align: center; border: 1px solid var(--border); }
 .stat-label { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 5px; }
@@ -285,7 +292,7 @@ body {
 }
 
 /* ── Лидерборд ───────────────────────────────────────────────────── */
-#tab-leaders { padding: 12px 14px 80px; }
+#tab-leaders { padding: 12px 12px 24px; }
 
 .lb-sub-tabs {
   display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto;
@@ -409,4 +416,152 @@ body {
   66%  { box-shadow: 0 0 0 2px #b39ddb; }
   83%  { box-shadow: 0 0 0 2px #ff6b9d; }
   100% { box-shadow: 0 0 0 2px #ff6b6b; }
+}
+
+/* ── Экспорт / Импорт прогресса ──────────────────────────────────── */
+.progress-io-block {
+  background: var(--bg2); border-radius: var(--radius);
+  padding: 14px; margin-bottom: 14px; border: 1px solid var(--border);
+}
+.progress-io-title {
+  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.09em; color: var(--green-light); opacity: 0.75;
+  margin-bottom: 10px;
+}
+.progress-io-hint {
+  font-size: 0.75rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 10px;
+}
+.progress-io-btns {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.progress-io-btns button {
+  flex: 1; min-width: 120px; padding: 10px 8px;
+  border: 1px solid var(--border); border-radius: 10px;
+  font-size: 0.8rem; font-weight: 700; cursor: pointer;
+  transition: all var(--tr); touch-action: manipulation;
+}
+#btn-export {
+  background: var(--green); color: #fff; border-color: var(--green);
+}
+#btn-export:active { background: var(--green-dim); transform: scale(0.96); }
+#btn-import {
+  background: var(--bg3); color: var(--text);
+}
+#btn-import:active { background: var(--green); color: #fff; border-color: var(--green); transform: scale(0.96); }
+
+#import-area {
+  display: none; margin-top: 10px;
+}
+#import-area textarea {
+  width: 100%; height: 72px; padding: 8px 10px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text);
+  font-size: 0.78rem; font-family: monospace; resize: none;
+  outline: none;
+}
+#import-area textarea:focus { border-color: var(--border-hi); }
+#btn-import-confirm {
+  width: 100%; margin-top: 8px; padding: 10px;
+  background: var(--green); color: #fff;
+  border: none; border-radius: 10px;
+  font-size: 0.85rem; font-weight: 700; cursor: pointer;
+  transition: all var(--tr); touch-action: manipulation;
+}
+#btn-import-confirm:active { background: var(--green-dim); transform: scale(0.96); }
+
+/* ── Адаптивный дизайн — медиа-запросы ───────────────────────────── */
+
+/* Очень маленькие экраны (до 360px) */
+@media (max-width: 360px) {
+  .coin-count { font-size: 1.2rem; }
+  #click-btn { width: 160px; height: 160px; }
+  .click-area { margin: 4px 0 4px; }
+  .stat-grid { gap: 6px; }
+  .stat-card { padding: 10px 8px; }
+  .stat-value { font-size: 1rem; }
+}
+
+/* Мобильные телефоны (361px – 480px) — базовая мобильная раскладка */
+@media (min-width: 361px) and (max-width: 480px) {
+  #click-btn { width: 175px; height: 175px; }
+}
+
+/* Малые телефоны по высоте (высота до 650px) */
+@media (max-height: 650px) {
+  #click-btn { width: 145px; height: 145px; }
+  .click-area { margin: 2px 0 2px; }
+  #tab-clicker { padding: 6px 16px 16px; }
+  .level-progress { margin-top: 6px; }
+  .clicker-info { margin-top: 4px; }
+}
+
+/* Планшеты (481px – 1024px) */
+@media (min-width: 481px) and (max-width: 1024px) {
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #0a1a0f;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  #app-wrapper {
+    width: 100%;
+    max-width: 520px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  #tab-content {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  #click-btn { width: 200px; height: 200px; }
+  .stat-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ПК (1025px и выше) */
+@media (min-width: 1025px) {
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    background: #08150c;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  /* Декоративный фон на PC */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 50%, rgba(61,158,95,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 80% 50%, rgba(93,201,135,0.04) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  #app-wrapper {
+    position: relative; z-index: 1;
+    width: 100%;
+    max-width: 460px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 80px rgba(0,0,0,0.6);
+  }
+  #tab-content {
+    flex: 1;
+    height: auto;
+    overflow-y: auto;
+  }
+  #click-btn { width: 200px; height: 200px; }
+  .stat-grid { grid-template-columns: repeat(3, 1fr); }
+  .upgrade-card { padding: 14px; }
+  /* Скроллбар для PC */
+  #tab-content::-webkit-scrollbar { width: 4px; }
+  #tab-content::-webkit-scrollbar-track { background: transparent; }
+  #tab-content::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 4px; }
 }
