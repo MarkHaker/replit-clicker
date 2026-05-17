@@ -1,0 +1,441 @@
+/* ══════════════════════════════════════════════════════════════════
+   Telegram Clicker WebApp — стили
+   Адаптирован под Telegram WebApp SDK (tg-theme-* переменные)
+   Mobile-first, оптимизирован под слабые устройства
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Переменные темы Telegram ────────────────────────────────────── */
+:root {
+  --tg-bg:           var(--tg-theme-bg-color, #1a1a2e);
+  --tg-secondary-bg: var(--tg-theme-secondary-bg-color, #16213e);
+  --tg-text:         var(--tg-theme-text-color, #eaeaea);
+  --tg-hint:         var(--tg-theme-hint-color, #7f8c8d);
+  --tg-link:         var(--tg-theme-link-color, #6c63ff);
+  --tg-btn:          var(--tg-theme-button-color, #6c63ff);
+  --tg-btn-text:     var(--tg-theme-button-text-color, #ffffff);
+  --accent:          #f7c948;
+  --accent2:         #ff6b6b;
+  --green:           #2ecc71;
+  --radius:          14px;
+  --transition:      0.18s ease;
+}
+
+/* ── Сброс и базовые стили ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--tg-bg);
+  color: var(--tg-text);
+  overflow-x: hidden;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Оверлей оффлайн-бонуса ──────────────────────────────────────── */
+#offline-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(6px);
+}
+#offline-overlay.hidden { display: none; }
+
+.offline-card {
+  background: var(--tg-secondary-bg);
+  border-radius: 20px;
+  padding: 30px 24px;
+  max-width: 300px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  animation: popIn .3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.offline-card h2 { font-size: 1.4rem; margin-bottom: 8px; }
+.offline-card .bonus-amount {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 12px 0;
+}
+.offline-card p { color: var(--tg-hint); font-size: 0.88rem; margin-bottom: 20px; }
+.offline-card button {
+  width: 100%;
+  padding: 14px;
+  background: var(--tg-btn);
+  color: var(--tg-btn-text);
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform var(--transition), opacity var(--transition);
+}
+.offline-card button:active { transform: scale(0.96); opacity: 0.85; }
+
+/* ── Шапка ───────────────────────────────────────────────────────── */
+#app-header {
+  background: var(--tg-secondary-bg);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.coin-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.coin-icon { font-size: 1.4rem; }
+.coin-count {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  min-width: 90px;
+}
+
+.header-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.header-stat {
+  font-size: 0.75rem;
+  color: var(--tg-hint);
+}
+.header-stat span { color: var(--tg-text); font-weight: 600; }
+
+/* ── Навигация (вкладки) ─────────────────────────────────────────── */
+#tabs-nav {
+  display: flex;
+  background: var(--tg-secondary-bg);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 0;
+  background: none;
+  border: none;
+  color: var(--tg-hint);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: color var(--transition);
+  position: relative;
+}
+.tab-btn .tab-icon { font-size: 1.2rem; }
+.tab-btn.active { color: var(--tg-btn); }
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 20%; right: 20%;
+  height: 2px;
+  background: var(--tg-btn);
+  border-radius: 2px 2px 0 0;
+}
+
+/* ── Контент вкладок ─────────────────────────────────────────────── */
+#tab-content { height: calc(100vh - 108px); overflow-y: auto; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Вкладка: Кликер ─────────────────────────────────────────────── */
+#tab-clicker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px 100px;
+}
+
+.click-area {
+  position: relative;
+  margin: 20px 0;
+}
+
+#click-btn {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #8b7cf8, var(--tg-btn) 60%, #4a35cc);
+  border: 4px solid rgba(255,255,255,0.15);
+  box-shadow:
+    0 0 0 0 rgba(108,99,255,0.4),
+    0 8px 32px rgba(0,0,0,0.4);
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+#click-btn::before {
+  content: '';
+  position: absolute;
+  top: 15%; left: 20%;
+  width: 30%; height: 20%;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  transform: rotate(-30deg);
+}
+#click-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 0 0 14px rgba(108,99,255,0.15), 0 4px 16px rgba(0,0,0,0.4);
+}
+
+/* Всплывающие +N при клике */
+.float-num {
+  position: absolute;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--accent);
+  pointer-events: none;
+  animation: floatUp 0.9s ease forwards;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  z-index: 10;
+}
+
+.clicker-info {
+  text-align: center;
+  margin-top: 10px;
+}
+.clicker-info p {
+  color: var(--tg-hint);
+  font-size: 0.85rem;
+  margin: 3px 0;
+}
+.clicker-info span { color: var(--tg-text); font-weight: 700; }
+
+/* Прогресс до следующего уровня */
+.level-progress {
+  width: 100%;
+  max-width: 280px;
+  margin-top: 18px;
+}
+.level-bar-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--tg-hint);
+  margin-bottom: 5px;
+}
+.progress-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--tg-btn), #a78bfa);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+/* ── Вкладка: Магазин ────────────────────────────────────────────── */
+#tab-shop {
+  padding: 16px;
+}
+
+.shop-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--tg-hint);
+  margin: 18px 0 8px;
+}
+.shop-section-title:first-child { margin-top: 0; }
+
+.upgrade-card {
+  background: var(--tg-secondary-bg);
+  border-radius: var(--radius);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: border-color var(--transition);
+}
+.upgrade-card.affordable { border-color: rgba(108,99,255,0.35); }
+
+.upgrade-icon { font-size: 2rem; flex-shrink: 0; }
+
+.upgrade-info { flex: 1; min-width: 0; }
+.upgrade-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.upgrade-desc {
+  font-size: 0.78rem;
+  color: var(--tg-hint);
+  margin: 2px 0 6px;
+}
+.upgrade-level {
+  font-size: 0.75rem;
+  color: var(--tg-link);
+  font-weight: 600;
+}
+
+.upgrade-mini-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 999px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+.upgrade-mini-fill {
+  height: 100%;
+  background: var(--tg-btn);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.upgrade-buy-btn {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  background: var(--tg-btn);
+  color: var(--tg-btn-text);
+  border: none;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform var(--transition), opacity var(--transition), background var(--transition);
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.upgrade-buy-btn .btn-cost {
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+.upgrade-buy-btn:disabled {
+  background: rgba(255,255,255,0.08);
+  color: var(--tg-hint);
+  cursor: not-allowed;
+}
+.upgrade-buy-btn:not(:disabled):active { transform: scale(0.94); opacity: 0.85; }
+
+/* ── Вкладка: Статистика ─────────────────────────────────────────── */
+#tab-stats {
+  padding: 16px;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  background: var(--tg-secondary-bg);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.stat-card .stat-label {
+  font-size: 0.75rem;
+  color: var(--tg-hint);
+  margin-bottom: 6px;
+}
+.stat-card .stat-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+.stat-card .stat-value.green { color: var(--green); }
+.stat-card .stat-value.blue  { color: var(--tg-link); }
+
+.achievements-section h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.achievement {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--tg-secondary-bg);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.achievement.locked { opacity: 0.4; }
+.achievement-icon { font-size: 1.6rem; }
+.achievement-info .ach-name { font-weight: 700; font-size: 0.9rem; }
+.achievement-info .ach-desc { font-size: 0.78rem; color: var(--tg-hint); }
+
+/* ── Анимации ────────────────────────────────────────────────────── */
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  70%  { opacity: 1; transform: translateY(-60px) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-80px) scale(0.9); }
+}
+
+@keyframes popIn {
+  0%   { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(108,99,255,0.4); }
+  50%       { box-shadow: 0 0 0 18px rgba(108,99,255,0); }
+}
+
+#click-btn { animation: pulse 2.5s infinite; }
+#click-btn:active { animation: none; }
+
+/* ── Тост-уведомления ────────────────────────────────────────────── */
+#toast-container {
+  position: fixed;
+  bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: rgba(40,40,60,0.95);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  white-space: nowrap;
+  animation: toastAnim 2.5s ease forwards;
+}
+@keyframes toastAnim {
+  0%   { opacity:0; transform: translateY(10px); }
+  15%  { opacity:1; transform: translateY(0); }
+  75%  { opacity:1; transform: translateY(0); }
+  100% { opacity:0; transform: translateY(-6px); }
+}
