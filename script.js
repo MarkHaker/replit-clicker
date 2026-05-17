@@ -330,14 +330,10 @@ function getLevel(s) {
 }
 
 function getLevelData(totalClicks) {
-  if (totalClicks < 1000) {
-    return { level:1, current:totalClicks, needed:1000, pct: totalClicks/1000 };
-  }
-  const level = Math.floor(totalClicks / 500);
-  const start  = 500 * level;
-  const end    = 500 * (level + 1);
-  const cur    = totalClicks - start;
-  return { level, current:cur, needed:500, pct: cur/500 };
+  const idx   = Math.floor(totalClicks / 500);
+  const start = idx * 500;
+  const cur   = totalClicks - start;
+  return { level: idx + 1, current: cur, needed: 500, pct: cur / 500 };
 }
 
 // ── Вспомогательные функции для чеков ────────────────────────────
@@ -499,60 +495,6 @@ function claimAchievement(id) {
   updateUI();
   renderAchievements();
   updateAchStats();
-}
-
-// ── Экспорт / Импорт прогресса ────────────────────────────────────
-function exportProgress() {
-  try {
-    const data = JSON.stringify(state);
-    const b64  = btoa(unescape(encodeURIComponent(data)));
-    // Копируем в буфер обмена
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(b64).then(() => {
-        showToast('Код прогресса скопирован! Сохраните его в надёжном месте.');
-      }).catch(() => _showExportFallback(b64));
-    } else {
-      _showExportFallback(b64);
-    }
-  } catch(e) { showToast('Ошибка экспорта'); }
-}
-
-function _showExportFallback(b64) {
-  const ta = document.getElementById('export-code-area');
-  if (!ta) return;
-  ta.style.display = 'block';
-  ta.querySelector('textarea').value = b64;
-  ta.querySelector('textarea').select();
-  showToast('Скопируйте код из поля ниже');
-}
-
-function importProgress() {
-  const area = document.getElementById('import-area');
-  if (!area) return;
-  area.style.display = area.style.display === 'none' ? 'block' : 'none';
-}
-
-function confirmImport() {
-  try {
-    const ta  = document.querySelector('#import-area textarea');
-    const raw = ta ? ta.value.trim() : '';
-    if (!raw) { showToast('Вставьте код прогресса'); return; }
-    const json   = decodeURIComponent(escape(atob(raw)));
-    const parsed = JSON.parse(json);
-    if (typeof parsed.balance === 'undefined') throw new Error('bad');
-    state = { ...defaultState(), ...parsed };
-    if (!state.flags)  state.flags  = {playedAtNight:false,playedEarlyMorn:false,rapidClick:false,longOffline:false};
-    if (!state.claimed) state.claimed = [];
-    recalcStats();
-    saveGame();
-    updateUI();
-    document.getElementById('import-area').style.display = 'none';
-    ta.value = '';
-    showToast('Прогресс успешно загружен!');
-    haptic('heavy');
-  } catch(e) {
-    showToast('Неверный код — проверьте и повторите');
-  }
 }
 
 // ── Синхронизация с ботом ─────────────────────────────────────────
