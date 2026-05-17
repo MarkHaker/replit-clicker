@@ -1,9 +1,63 @@
 {
-  "updated": 1779019088,
-  "balance": [],
-  "clicks": [],
-  "auto": [],
-  "achievements": [],
-  "levels": [],
-  "referrals": []
+  "updated": 1779048768,
+  "balance": [
+    {
+      "username": "I_like_pinchilin",
+      "value": 0.0
+    },
+    {
+      "username": "Senko_live",
+      "value": 0.0
+    }
+  ],
+  "clicks": [
+    {
+      "username": "I_like_pinchilin",
+      "value": 0
+    },
+    {
+      "username": "Senko_live",
+      "value": 0
+    }
+  ],
+  "auto": [
+    {
+      "username": "I_like_pinchilin",
+      "value": 0.0
+    },
+    {
+      "username": "Senko_live",
+      "value": 0.0
+    }
+  ],
+  "achievements": [
+    {
+      "username": "I_like_pinchilin",
+      "value": 0
+    },
+    {
+      "username": "Senko_live",
+      "value": 0
+    }
+  ],
+  "levels": [
+    {
+      "username": "I_like_pinchilin",
+      "value": 1
+    },
+    {
+      "username": "Senko_live",
+      "value": 1
+    }
+  ],
+  "referrals": [
+    {
+      "username": "I_like_pinchilin",
+      "value": 0
+    },
+    {
+      "username": "Senko_live",
+      "value": 0
+    }
+  ]
 }
