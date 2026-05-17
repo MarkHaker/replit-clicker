@@ -107,7 +107,8 @@ body {
   box-shadow: 0 12px 40px rgba(0,0,0,0.6);
   animation: slideDown .35s cubic-bezier(0.34,1.4,0.64,1);
 }
-.ach-popup-icon  { font-size: 2.2rem; line-height: 1; flex-shrink: 0; }
+.ach-popup-icon  { font-size: 2.2rem; line-height: 1; flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+.ach-popup-icon svg { width: 44px; height: 44px; display: block; }
 .ach-popup-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green-light); font-weight: 700; }
 .ach-popup-name  { font-size: 0.95rem; font-weight: 800; color: var(--text); }
 .ach-popup-reward{ font-size: 0.78rem; color: var(--gold); font-weight: 700; margin-top: 2px; }
@@ -224,7 +225,9 @@ body {
   transition: border-color var(--tr);
 }
 .upgrade-card.affordable { border-color: var(--border-hi); }
-.upgrade-icon { font-size: 1.9rem; flex-shrink: 0; line-height: 1; }
+.upgrade-icon { font-size: 1.9rem; flex-shrink: 0; line-height: 1; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+.upgrade-icon.svg-icon { font-size: 0; }
+.upgrade-icon.svg-icon svg { width: 44px; height: 44px; display: block; border-radius: 50%; }
 .upgrade-info  { flex: 1; min-width: 0; }
 .upgrade-name  { font-weight: 700; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .upgrade-desc  { font-size: 0.75rem; color: var(--text-dim); margin: 2px 0 5px; }
@@ -279,10 +282,39 @@ body {
 }
 .achievement.secret.locked .achievement-icon { filter: blur(3px); }
 .achievement.secret.locked .ach-name::after { content: ' 🔒'; }
-.achievement-icon { font-size: 1.5rem; line-height: 1; flex-shrink: 0; }
+.achievement-icon { font-size: 1.5rem; line-height: 1; flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+.achievement-icon.svg-icon { font-size: 0; }
+.achievement-icon.svg-icon svg { width: 40px; height: 40px; display: block; border-radius: 50%; }
+.achievement.locked .achievement-icon.svg-icon svg { opacity: 0.35; filter: saturate(0.3); }
 .ach-name { font-weight: 700; font-size: 0.87rem; }
 .ach-desc { font-size: 0.75rem; color: var(--text-dim); margin-top: 1px; }
 .ach-reward { font-size: 0.72rem; color: var(--gold); font-weight: 700; margin-top: 2px; }
+.claimed-label { color: var(--green-light) !important; }
+.ach-claim-btn {
+  flex-shrink: 0; margin-left: auto;
+  padding: 7px 13px;
+  background: linear-gradient(135deg, var(--gold) 0%, #e6a800 100%);
+  color: #0f1f14; font-size: 0.78rem; font-weight: 800;
+  border: none; border-radius: 8px; cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(247,201,72,0.4);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.ach-claim-btn:hover { transform: scale(1.05); box-shadow: 0 4px 14px rgba(247,201,72,0.55); }
+.ach-claim-btn:active { transform: scale(0.96); }
+.achievement.unlocked { border-color: var(--gold); background: linear-gradient(135deg, rgba(247,201,72,0.07) 0%, var(--bg2) 100%); }
+.achievement.claimed  { border-color: var(--border-hi); }
+/* Tab badge */
+.tab-btn { position: relative; }
+#stats-tab-badge {
+  display: none; position: absolute; top: 2px; right: 4px;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  background: var(--gold); color: #0f1f14;
+  font-size: 0.6rem; font-weight: 900;
+  border-radius: 999px;
+  align-items: center; justify-content: center;
+  pointer-events: none;
+}
 .ach-secret-badge {
   position: absolute; top: 7px; right: 10px;
   font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
