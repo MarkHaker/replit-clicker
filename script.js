@@ -114,19 +114,24 @@ function spawnConfetti() {
 // ── Очередь уведомлений о достижениях ────────────────────────────
 let _achQueue = [], _achShowing = false;
 
-function queueAchievement(ach, rewardMsg) {
-  _achQueue.push({ach, rewardMsg});
+function queueAchievement(ach) {
+  _achQueue.push({ach});
   if (!_achShowing) _showNextAch();
 }
 
 function _showNextAch() {
   if (!_achQueue.length) { _achShowing = false; return; }
   _achShowing = true;
-  const {ach, rewardMsg} = _achQueue.shift();
+  const {ach} = _achQueue.shift();
   const popup = document.getElementById('ach-popup');
-  document.getElementById('ach-popup-icon').textContent   = ach.icon;
+  const iconEl = document.getElementById('ach-popup-icon');
+  if (ICONS[ach.id]) {
+    iconEl.innerHTML = ICONS[ach.id];
+  } else {
+    iconEl.textContent = ach.icon || '🏆';
+  }
   document.getElementById('ach-popup-name').textContent   = ach.name;
-  document.getElementById('ach-popup-reward').textContent = `Награда: ${rewardMsg}`;
+  document.getElementById('ach-popup-reward').textContent = '⬇ Заберите награду в разделе «Достижения»';
   // Секретные — радужная рамка + конфетти
   popup.className = ach.secret ? 'secret' : '';
   popup.classList.remove('hidden');
@@ -139,6 +144,84 @@ function _showNextAch() {
     setTimeout(_showNextAch, 350);
   }, 3800);
 }
+
+// ── SVG-иконки ────────────────────────────────────────────────────
+const ICONS = {
+  // ─── Достижения: Клики ───
+  a01:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M18 8a2 2 0 00-4 0v5.5a2 2 0 00-3 1.8v2a2 2 0 00-1 1.7v2c0 3 2.5 5 5.5 5H17c3 0 5.5-2 5.5-5v-5.5a2 2 0 00-4-0.5V8z" fill="#7fd49a"/><circle cx="16" cy="11" r="1.5" fill="#d4f4e2" opacity=".6"/></svg>`,
+  a02:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M9 13h4v8H9c-1.1 0-2-.9-2-2v-4c0-1.1.9-2 2-2z" fill="#7fd49a"/><path d="M23 13h-4v8h4c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2z" fill="#7fd49a"/><rect x="13" y="11" width="6" height="10" rx="2" fill="#5dc987"/></svg>`,
+  a03:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M16 5c-2 5-6 7-4 13 1 2.5 3 4 4 4s3-1.5 4-4c2-6-2-8-4-13z" fill="#f7c948"/><path d="M16 12c-1 2.5-3 3.5-2 7 .5 1.5 2 2.5 2 2.5s1.5-1 2-2.5c1-3.5-1-4.5-2-7z" fill="#ff9f43"/></svg>`,
+  a04:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><g fill="#7fd49a"><rect x="14.5" y="3" width="3" height="5" rx="1"/><rect x="14.5" y="3" width="3" height="5" rx="1" transform="rotate(45 16 16)"/><rect x="14.5" y="3" width="3" height="5" rx="1" transform="rotate(90 16 16)"/><rect x="14.5" y="3" width="3" height="5" rx="1" transform="rotate(135 16 16)"/><rect x="14.5" y="3" width="3" height="5" rx="1" transform="rotate(180 16 16)"/><rect x="14.5" y="3" width="3" height="5" rx="1" transform="rotate(225 16 16)"/><rect x="14.5" y="3" width="3" height="5" rx="1" transform="rotate(270 16 16)"/><rect x="14.5" y="3" width="3" height="5" rx="1" transform="rotate(315 16 16)"/></g><circle cx="16" cy="16" r="5" fill="#3d9e5f"/><circle cx="16" cy="16" r="3" fill="#162b1c"/></svg>`,
+  a05:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M8 22c0-4 2-6 4-7l1-3c0-1.5 1.5-2.5 3-2s2.5 2 2 3.5L17 16c2 .5 5 2 5 6" stroke="#7fd49a" stroke-width="2.5" stroke-linecap="round"/><path d="M10 22h12" stroke="#7fd49a" stroke-width="2" stroke-linecap="round"/><circle cx="16" cy="10" r="2.5" fill="#5dc987"/></svg>`,
+  a06:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><circle cx="16" cy="14" r="7" fill="#f7c948" stroke="#e6a800" stroke-width="1"/><path d="M13 14l2 2 4-4" stroke="#162b1c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 21l-2 6 5-3 5 3-2-6" fill="#f7c948" stroke="#e6a800" stroke-width="1"/></svg>`,
+  a07:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M16 4l5 8h5l-4 8-6 7-6-7-4-8h5z" fill="#4fc3f7"/><path d="M16 4l5 8h-10z" fill="#81d4fa"/><path d="M11 12l5 15 5-15" stroke="#0288d1" stroke-width="1" opacity=".6"/><line x1="6" y1="12" x2="26" y2="12" stroke="#81d4fa" stroke-width="1"/></svg>`,
+
+  // ─── Достижения: Баланс/Заработок ───
+  b01:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M16 24c0-8-5-9-4-14 1 2 3 3 4 3s3-1 4-3c1 5-4 6-4 14z" fill="#5dc987"/><path d="M16 26v-2M13 24h6" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  b02:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M10 19h12v5c0 1-1 2-2 2H12c-1 0-2-1-2-2v-5z" fill="#f7c948"/><path d="M10 11h12l-2 8H12l-2-8z" fill="#f7c948"/><path d="M8 11h16" stroke="#e6a800" stroke-width="1.5" stroke-linecap="round"/><path d="M13 9l3-4 3 4" stroke="#f7c948" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  b03:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M11 13c0-2 2-5 5-5s5 3 5 5v11c0 1.5-1 3-5 3s-5-1.5-5-3V13z" fill="#f7c948"/><path d="M13 10c.5-2 1.5-3 3-3s2.5 1 3 3" stroke="#e6a800" stroke-width="1.5" stroke-linecap="round"/><text x="16" y="21" text-anchor="middle" font-size="7" font-weight="900" fill="#162b1c" font-family="sans-serif">$</text></svg>`,
+  b04:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><circle cx="16" cy="16" r="9" fill="#f7c948"/><text x="16" y="21" text-anchor="middle" font-size="12" font-weight="900" fill="#162b1c" font-family="sans-serif">$</text><circle cx="16" cy="16" r="9" stroke="#e6a800" stroke-width="1.5" fill="none"/></svg>`,
+  b05:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><polygon points="16,5 18.9,12.6 27,13 21,18.5 23,26 16,22 9,26 11,18.5 5,13 13.1,12.6" fill="#f7c948" stroke="#e6a800" stroke-width="1" stroke-linejoin="round"/></svg>`,
+  b06:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M8 22h16v2c0 1-1 2-2 2H10c-1 0-2-1-2-2v-2z" fill="#f7c948"/><path d="M8 22l2-9h12l2 9" fill="#f7c948"/><path d="M8 22l4-6v6M16 22V16M24 22l-4-6v6" stroke="#e6a800" stroke-width="1"/><circle cx="10" cy="13" r="2" fill="#ff9f43"/><circle cx="16" cy="11" r="2" fill="#ff9f43"/><circle cx="22" cy="13" r="2" fill="#ff9f43"/></svg>`,
+  b07:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M16 5v22M10 9l6-4 6 4M10 23l6 4 6-4" stroke="#f7c948" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 9v14M22 9v14" stroke="#f7c948" stroke-width="2" stroke-linecap="round"/></svg>`,
+
+  // ─── Достижения: Магазин ───
+  u01:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M6 10h20l-2 12H8L6 10z" fill="none" stroke="#7fd49a" stroke-width="1.5"/><path d="M6 10l-2-4H2" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/><circle cx="11" cy="25" r="2" fill="#7fd49a"/><circle cx="21" cy="25" r="2" fill="#7fd49a"/><path d="M12 10l1 7M20 10l-1 7M12 17h8" stroke="#5dc987" stroke-width="1" opacity=".7"/></svg>`,
+  u02:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><rect x="8" y="18" width="16" height="6" rx="2" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1"/><rect x="9" y="13" width="14" height="6" rx="2" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1"/><rect x="10" y="8" width="12" height="6" rx="2" fill="#5dc987" stroke="#7fd49a" stroke-width="1"/></svg>`,
+  u03:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><rect x="8" y="14" width="16" height="12" rx="1" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1.5"/><path d="M5 14h22" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/><path d="M8 14l3-6h10l3 6" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1.5" stroke-linejoin="round"/><rect x="13" y="19" width="6" height="7" rx="1" fill="#7fd49a" opacity=".5"/></svg>`,
+  u04:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><rect x="8" y="20" width="16" height="6" rx="1" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1.5"/><rect x="11" y="12" width="10" height="9" rx="1" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1.5"/><path d="M8 12h16" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/><path d="M11 7h10l1 5H10l1-5z" fill="#5dc987" stroke="#7fd49a" stroke-width="1"/><rect x="14" y="14" width="4" height="7" rx="1" fill="#7fd49a" opacity=".5"/></svg>`,
+  u05:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><circle cx="16" cy="16" r="8" stroke="#7fd49a" stroke-width="1.5" fill="none"/><ellipse cx="16" cy="16" rx="4" ry="8" stroke="#7fd49a" stroke-width="1.5" fill="none"/><line x1="8" y1="16" x2="24" y2="16" stroke="#7fd49a" stroke-width="1.5"/><line x1="9" y1="11.5" x2="23" y2="11.5" stroke="#7fd49a" stroke-width="1"/><line x1="9" y1="20.5" x2="23" y2="20.5" stroke="#7fd49a" stroke-width="1"/></svg>`,
+
+  // ─── Достижения: Авто-доход ───
+  i01:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><rect x="9" y="10" width="14" height="12" rx="3" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1.5"/><circle cx="12.5" cy="15" r="2" fill="#7fd49a"/><circle cx="19.5" cy="15" r="2" fill="#7fd49a"/><path d="M13 20h6" stroke="#5dc987" stroke-width="1.5" stroke-linecap="round"/><rect x="13" y="7" width="6" height="3" rx="1" fill="#5dc987"/><path d="M9 16H6M23 16h3" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  i02:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><rect x="7" y="16" width="10" height="10" rx="1" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1.5"/><rect x="17" y="19" width="8" height="7" rx="1" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1.5"/><rect x="9" y="13" width="6" height="4" rx="1" fill="#5dc987"/><path d="M11 10V8M13 9V7M15 10V8" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/><rect x="9" y="19" width="3" height="4" rx="1" fill="#7fd49a" opacity=".6"/></svg>`,
+  i03:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><rect x="5" y="18" width="5" height="8" rx="1" fill="#3d9e5f"/><rect x="11" y="13" width="5" height="13" rx="1" fill="#5dc987"/><rect x="17" y="15" width="5" height="11" rx="1" fill="#3d9e5f"/><rect x="23" y="20" width="4" height="6" rx="1" fill="#3d9e5f"/><rect x="12" y="9" width="3" height="5" rx="1" fill="#7fd49a"/><line x1="5" y1="26" x2="27" y2="26" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  i04:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><rect x="5" y="19" width="4" height="7" rx="1" fill="#2d7a48"/><rect x="10" y="15" width="4" height="11" rx="1" fill="#3d9e5f"/><rect x="15" y="17" width="4" height="9" rx="1" fill="#2d7a48"/><rect x="20" y="21" width="4" height="5" rx="1" fill="#2d7a48"/><path d="M22 9a4 4 0 11-4 4" stroke="#f7c948" stroke-width="1.5" stroke-linecap="round"/><circle cx="22" cy="9" r="3" fill="#f7c948" opacity=".9"/><line x1="5" y1="26" x2="27" y2="26" stroke="#5dc987" stroke-width="1" stroke-linecap="round"/></svg>`,
+  i05:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><circle cx="16" cy="16" r="4" fill="#7fd49a"/><path d="M16 12c-2-3-6-4-8-2" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M12 10c-3-1-6 1-7 4" stroke="#5dc987" stroke-width="1" stroke-linecap="round" fill="none"/><path d="M20 12c2-3 6-4 8-2" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M20 20c3 1 6-1 7-4" stroke="#5dc987" stroke-width="1" stroke-linecap="round" fill="none"/><path d="M16 20c2 3 6 4 8 2" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M12 20c-3 1-6-1-7-4" stroke="#5dc987" stroke-width="1" stroke-linecap="round" fill="none"/><circle cx="16" cy="16" r="2" fill="#d4f4e2"/></svg>`,
+
+  // ─── Достижения: Множитель ───
+  m01:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M16 27l-4-6H8l4-6-4-6h4l4-6 4 6h4l-4 6 4 6h-4z" fill="#f7c948" stroke="#e6a800" stroke-width="1" stroke-linejoin="round"/><path d="M16 21l-2-3H11l2-3-2-3h3l2-3 2 3h3l-2 3 2 3h-3z" fill="#ff9f43"/></svg>`,
+  m02:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M17 5l-8 13h6l-2 9 9-13h-6z" fill="#f7c948" stroke="#e6a800" stroke-width="1" stroke-linejoin="round"/></svg>`,
+  m03:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M16 16m-1 0a1 1 0 102 0 1 1 0 10-2 0" fill="#7fd49a"/><path d="M16 16c0-3 4-5 4-8" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M16 16c3 0 5 4 8 4" stroke="#5dc987" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M16 16c0 3-4 5-4 8" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M16 16c-3 0-5-4-8-4" stroke="#5dc987" stroke-width="1.5" stroke-linecap="round" fill="none"/><circle cx="16" cy="8" r="2" fill="#7fd49a" opacity=".8"/><circle cx="24" cy="20" r="2" fill="#5dc987" opacity=".8"/><circle cx="16" cy="24" r="2" fill="#7fd49a" opacity=".8"/><circle cx="8" cy="12" r="2" fill="#5dc987" opacity=".8"/></svg>`,
+  m04:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M5 16c0-3.5 2.5-6 5.5-6S16 13 16 16s3 6 5.5 6S27 19.5 27 16" stroke="#7fd49a" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="10.5" cy="16" r="3" fill="none" stroke="#7fd49a" stroke-width="2"/><circle cx="21.5" cy="16" r="3" fill="none" stroke="#7fd49a" stroke-width="2"/></svg>`,
+
+  // ─── Достижения: Уровни ───
+  l01:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M16 26c-2-5-8-8-7-15 2 2 4 3 7 3s5-1 7-3c1 7-5 10-7 15z" fill="#5dc987"/><path d="M16 22c-1-3-4-5-4-10 1 1 2.5 2 4 2s3-1 4-2c0 5-3 7-4 10z" fill="#7fd49a"/><line x1="16" y1="8" x2="16" y2="26" stroke="#3d9e5f" stroke-width="1" opacity=".5"/></svg>`,
+  l02:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><ellipse cx="16" cy="13" rx="8" ry="7" fill="#3d9e5f"/><ellipse cx="16" cy="13" rx="5" ry="4" fill="#5dc987"/><rect x="14" y="19" width="4" height="7" rx="1" fill="#2d6e45"/><ellipse cx="16" cy="13" rx="2.5" ry="2" fill="#7fd49a"/></svg>`,
+  l03:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M16 6L8 24h16z" fill="#5dc987" stroke="#7fd49a" stroke-width="1" stroke-linejoin="round"/><path d="M11 17L5 27h22L21 17" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1" stroke-linejoin="round"/><path d="M8 24h16" stroke="#7fd49a" stroke-width="1" opacity=".5"/></svg>`,
+  l04:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><ellipse cx="16" cy="17" rx="7" ry="5" fill="#f7c948"/><circle cx="16" cy="13" rx="4" ry="4" fill="#f7c948" rx="4"/><circle cx="16" cy="13" r="4" fill="#f7c948"/><circle cx="13" cy="12" r="1.5" fill="#162b1c"/><circle cx="19" cy="12" r="1.5" fill="#162b1c"/><path d="M14 16h4" stroke="#162b1c" stroke-width="1" stroke-linecap="round"/><path d="M10 17c-2 0-3-1-3-2s1-2 3-2M22 17c2 0 3-1 3-2s-1-2-3-2" stroke="#e6a800" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M10 22c2 2 8 3 12 0" stroke="#e6a800" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>`,
+  l05:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M8 22l12-14" stroke="#f7c948" stroke-width="2" stroke-linecap="round"/><polygon points="20,8 22,12 19,11 21,15 18,13 20,18 16,14 18,10 15,12 17,7" fill="#f7c948"/><circle cx="20" cy="8" r="2.5" fill="#fff" opacity=".9"/></svg>`,
+
+  // ─── Достижения: Прогресс ───
+  ac1:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><rect x="9" y="8" width="14" height="16" rx="2" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1.5"/><path d="M9 8c0-1 1-2 2-2h10c1 0 2 1 2 2" stroke="#7fd49a" stroke-width="1"/><line x1="12" y1="13" x2="20" y2="13" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="17" x2="20" y2="17" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="21" x2="17" y2="21" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/><circle cx="21" cy="21" r="3" fill="#f7c948"/><path d="M20 21l1 1 2-2" stroke="#162b1c" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  ac2:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><circle cx="16" cy="16" r="8" stroke="#7fd49a" stroke-width="1.5" fill="none"/><circle cx="16" cy="16" r="5" stroke="#5dc987" stroke-width="1.5" fill="none"/><circle cx="16" cy="16" r="2" stroke="#f7c948" stroke-width="1.5" fill="none"/><circle cx="16" cy="16" r="0.8" fill="#f7c948"/></svg>`,
+  ac3:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><circle cx="16" cy="13" r="6" fill="#f7c948" stroke="#e6a800" stroke-width="1"/><polygon points="16,9 17.2,12.1 20.5,12.5 18,14.7 18.8,18 16,16.3 13.2,18 14,14.7 11.5,12.5 14.8,12.1" fill="#162b1c" opacity=".3"/><path d="M12 18l-3 8 7-3 7 3-3-8" fill="#f7c948" stroke="#e6a800" stroke-width="1"/></svg>`,
+
+  // ─── Достижения: Секретные ───
+  s01:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#0a0f1a"/><path d="M20 9a8 8 0 11-8 8 6 6 0 008-8z" fill="#f7c948"/><circle cx="9" cy="9" r="1.5" fill="#f7c948" opacity=".6"/><circle cx="22" cy="7" r="1" fill="#f7c948" opacity=".8"/><circle cx="25" cy="14" r="1.2" fill="#f7c948" opacity=".5"/></svg>`,
+  s02:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#0a1a2e"/><path d="M5 20h22" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/><path d="M16 7v5M9 10l3 3M23 10l-3 3" stroke="#f7c948" stroke-width="1.5" stroke-linecap="round"/><path d="M16 7a6 6 0 016 6H10a6 6 0 016-6z" fill="#f7c948" opacity=".9"/><path d="M5 20c0 0 2-4 11-4s11 4 11 4" fill="#3d9e5f"/></svg>`,
+  s03:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M20 6l-10 13h7l-5 7 11-14h-7z" fill="#f7c948"/><path d="M5 16h3M24 16h3M7 10l2 1M23 10l-2 1M7 22l2-1M23 22l-2-1" stroke="#f7c948" stroke-width="1.5" stroke-linecap="round" opacity=".5"/></svg>`,
+  s04:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M10 6h12l-5 9h5l-12 11 5-9H10z" fill="none" stroke="#7fd49a" stroke-width="1.5" stroke-linejoin="round"/><path d="M13 15h6" stroke="#7fd49a" stroke-width="2" stroke-linecap="round"/></svg>`,
+  s05:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><circle cx="12" cy="12" r="5" stroke="#f7c948" stroke-width="2" fill="none"/><path d="M16 16l9 9" stroke="#f7c948" stroke-width="2.5" stroke-linecap="round"/><rect x="20" y="19" width="4" height="3" rx="1" transform="rotate(45 20 19)" fill="#f7c948"/></svg>`,
+  s06:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#0a1a2e"/><path d="M16 4l8 8-8 16-8-16z" fill="#4fc3f7" opacity=".9"/><path d="M16 4l8 8H8z" fill="#81d4fa"/><path d="M8 12l8 16 8-16" stroke="#0288d1" stroke-width="1"/><line x1="8" y1="12" x2="24" y2="12" stroke="#81d4fa" stroke-width="1"/></svg>`,
+
+  // ─── Улучшения: Сила клика ───
+  click1:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M16 8l-6 6 3 1-5 10 4-1-1 4 10-8-4-1 5-9-4 1z" fill="#7fd49a" stroke="#5dc987" stroke-width="1" stroke-linejoin="round"/></svg>`,
+  click2:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M10 12c0-4 3-7 7-6 3 1 5 3 5 7v8c0 2-2 3-4 3H13c-2 0-3-1-3-3v-9z" fill="#7fd49a"/><path d="M10 12c0-4 3-6 6-5" stroke="#5dc987" stroke-width="1.5" stroke-linecap="round"/><rect x="12" y="8" width="8" height="4" rx="2" fill="#5dc987"/></svg>`,
+  click3:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><line x1="16" y1="5" x2="16" y2="27" stroke="#7fd49a" stroke-width="3" stroke-linecap="round"/><path d="M16 5c0 0 6 5 6 11s-6 11-6 11" stroke="#5dc987" stroke-width="1.5" stroke-linecap="round" fill="none"/><circle cx="16" cy="16" r="3" fill="#7fd49a"/><path d="M9 10l4 6-4 6M23 10l-4 6 4 6" stroke="#7fd49a" stroke-width="1" stroke-linecap="round" fill="none" opacity=".5"/></svg>`,
+  click4:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M16 5l5 9h-3l4 13-10-9h4z" fill="#b39ddb" stroke="#9c7adb" stroke-width="1" stroke-linejoin="round"/><path d="M16 5l-5 9h3l-4 13 10-9h-4z" fill="#9c7adb" opacity=".7"/></svg>`,
+
+  // ─── Улучшения: Авто ───
+  auto1:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M8 12h16v12c0 1-1 2-2 2H10c-1 0-2-1-2-2V12z" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1.5"/><path d="M8 12c0-3 3-5 8-5s8 2 8 5" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1.5"/><line x1="16" y1="7" x2="16" y2="12" stroke="#7fd49a" stroke-width="1.5"/><rect x="11" y="16" width="4" height="4" rx="1" fill="#7fd49a"/><rect x="17" y="16" width="4" height="4" rx="1" fill="#7fd49a"/></svg>`,
+  auto2:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><rect x="10" y="9" width="12" height="11" rx="2" fill="#5dc987" stroke="#7fd49a" stroke-width="1.5"/><circle cx="13" cy="14" r="1.5" fill="#162b1c"/><circle cx="19" cy="14" r="1.5" fill="#162b1c"/><path d="M13 19h6" stroke="#162b1c" stroke-width="1.5" stroke-linecap="round"/><rect x="14" y="6" width="4" height="3" rx="1" fill="#7fd49a"/><path d="M10 16H7M22 16h3" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/><path d="M12 20l-2 5M20 20l2 5" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  auto3:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><ellipse cx="10" cy="12" rx="4" ry="2" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1"/><ellipse cx="22" cy="12" rx="4" ry="2" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1"/><ellipse cx="10" cy="20" rx="4" ry="2" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1"/><ellipse cx="22" cy="20" rx="4" ry="2" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1"/><circle cx="16" cy="16" r="4" fill="#5dc987" stroke="#7fd49a" stroke-width="1.5"/><rect x="15" y="12" width="2" height="8" rx="1" fill="#7fd49a" opacity=".5"/><rect x="12" y="15" width="8" height="2" rx="1" fill="#7fd49a" opacity=".5"/></svg>`,
+  auto4:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M11 9c0 0-2 3 0 5s4 1 5 3 0 5-2 6" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M21 9c0 0 2 3 0 5s-4 1-5 3 0 5 2 6" stroke="#5dc987" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M13 9h6M13 23h6" stroke="#7fd49a" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="9" r="2" fill="#7fd49a"/><circle cx="22" cy="9" r="2" fill="#5dc987"/><circle cx="10" cy="23" r="2" fill="#5dc987"/><circle cx="22" cy="23" r="2" fill="#7fd49a"/></svg>`,
+
+  // ─── Улучшения: Множитель ───
+  multi1:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M8 14c0-3 3-5 8-5s8 2 8 5" stroke="#7fd49a" stroke-width="1.5" fill="none"/><path d="M8 14c-1 0-2 1-2 2s1 2 2 2h20c1 0 2-1 2-2s-1-2-2-2" fill="#3d9e5f" stroke="#7fd49a" stroke-width="1"/><path d="M10 18l1 8h10l1-8" stroke="#7fd49a" stroke-width="1" fill="none"/><circle cx="12" cy="22" r="1.5" fill="#f7c948"/><circle cx="16" cy="24" r="1.5" fill="#f7c948"/><circle cx="20" cy="22" r="1.5" fill="#f7c948"/></svg>`,
+  multi2:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><polygon points="16,5 18.9,12.6 27,13 21,18.5 23,26 16,22 9,26 11,18.5 5,13 13.1,12.6" fill="#f7c948" stroke="#e6a800" stroke-width="1"/><circle cx="16" cy="16" r="4" fill="#e6a800"/><text x="16" y="19.5" text-anchor="middle" font-size="6" font-weight="900" fill="#f7c948" font-family="sans-serif">★</text></svg>`,
+  multi3:`<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#162b1c"/><path d="M16 26l-4-5H8l2-5-6-5h6l2-5h8l2 5h6l-6 5 2 5h-4z" fill="#f7c948" stroke="#e6a800" stroke-width="1" stroke-linejoin="round"/><path d="M16 26l-2-5h4z" fill="#ff9f43"/><path d="M8 11l8-7 8 7" fill="#ff9f43" stroke="#e6a800" stroke-width="1" stroke-linejoin="round"/></svg>`,
+};
 
 // ── Конфиг улучшений ──────────────────────────────────────────────
 // Мультипликаторы цены по категориям (сбалансированные):
@@ -261,9 +344,10 @@ function getLevelData(totalClicks) {
 function totalUpgrades(s) { return Object.values(s.upgrades).reduce((a,b)=>a+b,0); }
 function countUnlocked(s, type) {
   return ACHIEVEMENTS.filter(a=>{
-    if(type==='regular') return !a.secret && s.claimed.includes(a.id);
-    if(type==='secret')  return  a.secret && s.claimed.includes(a.id);
-    return s.claimed.includes(a.id);
+    const has = s.claimed.includes(a.id) || (s.unlocked||[]).includes(a.id);
+    if(type==='regular') return !a.secret && has;
+    if(type==='secret')  return  a.secret && has;
+    return has;
   }).length;
 }
 
@@ -273,8 +357,8 @@ function defaultState() {
     balance:0, clickPower:1, autoIncome:0, multiplier:1,
     achClickBonus:0, achAutoBonus:0,
     upgrades:{}, totalClicks:0, totalEarned:0,
-    sessionClicks:0, lastSaveTime:Date.now(), version:4,
-    claimed:[],
+    sessionClicks:0, lastSaveTime:Date.now(), version:6,
+    claimed:[], unlocked:[],
     flags:{ playedAtNight:false, playedEarlyMorn:false, rapidClick:false, longOffline:false },
     offlineBonusMax:0,
   };
@@ -299,6 +383,7 @@ function loadGame() {
       state = {...defaultState(), ...saved};
       if(!state.flags) state.flags={playedAtNight:false,playedEarlyMorn:false,rapidClick:false,longOffline:false};
       if(!state.claimed) state.claimed=[];
+      if(!state.unlocked) state.unlocked=[];
       if(state.achClickBonus===undefined) state.achClickBonus=0;
       if(state.achAutoBonus ===undefined) state.achAutoBonus=0;
     }
@@ -392,15 +477,28 @@ function applyReward(reward, silent=false) {
 function checkAllAchievements() {
   let anyNew=false;
   for(const ach of ACHIEVEMENTS){
-    if(state.claimed.includes(ach.id)) continue;
+    if(state.claimed.includes(ach.id) || state.unlocked.includes(ach.id)) continue;
     if(ach.check(state)){
-      state.claimed.push(ach.id);
-      const rewardMsg = applyReward(ach.reward);
-      queueAchievement(ach, rewardMsg);
+      state.unlocked.push(ach.id);
+      queueAchievement(ach);
       anyNew=true;
     }
   }
   if(anyNew){ saveGame(); updateAchStats(); }
+}
+
+function claimAchievement(id) {
+  if(state.claimed.includes(id) || !state.unlocked.includes(id)) return;
+  const ach = ACHIEVEMENTS.find(a=>a.id===id);
+  if(!ach) return;
+  state.claimed.push(id);
+  const msg = applyReward(ach.reward);
+  showToast(`${ach.name}: ${msg}!`);
+  haptic('heavy');
+  saveGame();
+  updateUI();
+  renderAchievements();
+  updateAchStats();
 }
 
 // ── Экспорт / Импорт прогресса ────────────────────────────────────
@@ -519,8 +617,11 @@ function renderShop() {
     for(const upg of s.upgrades){
       const lv=state.upgrades[upg.id]||0, cost=upgradeCost(upg);
       const afford=state.balance>=cost, pct=Math.min((lv/20)*100,100);
+      const iconHtml = ICONS[upg.id]
+        ? `<div class="upgrade-icon svg-icon">${ICONS[upg.id]}</div>`
+        : `<div class="upgrade-icon">${upg.icon}</div>`;
       html+=`<div class="upgrade-card ${afford?'affordable':''}">
-        <div class="upgrade-icon">${upg.icon}</div>
+        ${iconHtml}
         <div class="upgrade-info">
           <div class="upgrade-name">${upg.name}</div>
           <div class="upgrade-desc">${upg.desc}</div>
@@ -554,6 +655,13 @@ function updateAchStats() {
   document.getElementById('ach-fill-regular').style.width  = `${(reg/REGULAR_COUNT)*100}%`;
   document.getElementById('ach-count-secret').textContent  = sec>0 ? `${sec} / ${SECRET_COUNT}` : '? / ?';
   document.getElementById('ach-fill-secret').style.width   = `${(sec/SECRET_COUNT)*100}%`;
+  // Badge: сколько наград ещё не получено
+  const unclaimed = state.unlocked.filter(id=>!state.claimed.includes(id)).length;
+  const badge = document.getElementById('stats-tab-badge');
+  if(badge){
+    badge.textContent = unclaimed > 0 ? unclaimed : '';
+    badge.style.display = unclaimed > 0 ? 'flex' : 'none';
+  }
 }
 
 function rewardLabel(r) {
@@ -566,10 +674,15 @@ function rewardLabel(r) {
 function renderAchievements() {
   let html='';
   for(const ach of ACHIEVEMENTS){
-    const unlocked = state.claimed.includes(ach.id);
-    if(ach.secret && !unlocked){
+    const isClaimed  = state.claimed.includes(ach.id);
+    const isUnlocked = state.unlocked.includes(ach.id);
+    const hasAny = isClaimed || isUnlocked;
+    const iconSvg = ICONS[ach.id]
+      ? `<div class="achievement-icon svg-icon">${ICONS[ach.id]}</div>`
+      : `<div class="achievement-icon">${ach.icon}</div>`;
+    if(ach.secret && !hasAny){
       html+=`<div class="achievement secret locked">
-        <div class="achievement-icon">🔒</div>
+        <div class="achievement-icon svg-icon"><svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" fill="#0f1f14"/><rect x="11" y="15" width="10" height="9" rx="2" fill="#3d9e5f"/><path d="M12 15v-3a4 4 0 018 0v3" stroke="#5dc987" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="16" cy="19.5" r="1.5" fill="#162b1c"/></svg></div>
         <div class="achievement-info">
           <div class="ach-name">???</div>
           <div class="ach-desc">Секретное достижение</div>
@@ -578,14 +691,21 @@ function renderAchievements() {
       </div>`;
       continue;
     }
-    html+=`<div class="achievement ${ach.secret?'secret':''}${unlocked?' unlocked':' locked'}">
-      <div class="achievement-icon">${ach.icon}</div>
+    const claimBtn = isUnlocked && !isClaimed
+      ? `<button class="ach-claim-btn" onclick="claimAchievement('${ach.id}')">Получить</button>`
+      : '';
+    const rewardHtml = isClaimed
+      ? `<div class="ach-reward claimed-label">✓ Получено: ${rewardLabel(ach.reward)}</div>`
+      : `<div class="ach-reward">${rewardLabel(ach.reward)}</div>`;
+    html+=`<div class="achievement ${ach.secret?'secret':''}${isClaimed?' claimed':isUnlocked?' unlocked':' locked'}">
+      ${iconSvg}
       <div class="achievement-info">
         <div class="ach-name">${ach.name}</div>
         <div class="ach-desc">${ach.desc}</div>
-        <div class="ach-reward">${rewardLabel(ach.reward)}</div>
+        ${rewardHtml}
       </div>
       ${ach.secret?'<div class="ach-secret-badge">SECRET</div>':''}
+      ${claimBtn}
     </div>`;
   }
   document.getElementById('achievements-list').innerHTML=html;
