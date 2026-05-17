@@ -99,9 +99,31 @@ const ACHIEVEMENTS = [
 const REGULAR_COUNT = ACHIEVEMENTS.filter(a=>!a.secret).length; // 36
 const SECRET_COUNT  = ACHIEVEMENTS.filter(a=>a.secret).length;  // 6
 
+// ── Система уровней ───────────────────────────────────────────────
+// Уровень 1: 0–999 кликов (надо 1000 до след.)
+// Уровень 2: 1000–1499 (надо 500, порог = 500*2 = 1000)
+// Уровень N≥2: порог = 500*N, т.е. каждые 500 кликов — новый уровень
+// Примеры: lv2=1000 кликов, lv3=1500, lv4=2000, lv10=5000, lv100=50000
+
+function getLevel(s) {
+  const tc = s.totalClicks;
+  if (tc < 1000) return 1;
+  return Math.floor(tc / 500);
+}
+
+function getLevelData(totalClicks) {
+  if (totalClicks < 1000) {
+    return { level:1, current:totalClicks, needed:1000, pct: totalClicks/1000 };
+  }
+  const level = Math.floor(totalClicks / 500);
+  const start  = 500 * level;
+  const end    = 500 * (level + 1);
+  const cur    = totalClicks - start;
+  return { level, current:cur, needed:500, pct: cur/500 };
+}
+
 // ── Вспомогательные функции для чеков ────────────────────────────
 function totalUpgrades(s) { return Object.values(s.upgrades).reduce((a,b)=>a+b,0); }
-function getLevel(s)      { return Math.floor(s.totalEarned/1000)+1; }
 function countUnlocked(s, type) {
   return ACHIEVEMENTS.filter(a=>{
     if(type==='regular') return !a.secret && s.claimed.includes(a.id);
@@ -265,7 +287,9 @@ function syncWithBot() {
       clickPower:   state.clickPower,
       autoIncome:   state.autoIncome,
       sessionClicks:state.sessionClicks,
+      totalClicks:  state.totalClicks,
       achievements: state.claimed.length,
+      level:        getLevel(state),
       username:     TG_USERNAME,
     });
     if(payload.length>4000) return;
@@ -296,10 +320,10 @@ function updateUI() {
   document.getElementById('info-click').textContent   = formatNum(state.clickPower);
   document.getElementById('info-auto').textContent    = formatNum(state.autoIncome*state.multiplier);
   document.getElementById('info-multi').textContent   = state.multiplier.toFixed(2);
-  const earned=state.totalEarned, lv=getLevel(state), prog=(earned%1000)/1000;
-  document.getElementById('level-text').textContent = `Уровень ${lv}`;
-  document.getElementById('level-next').textContent = `${formatNum(earned%1000)} / 1 000`;
-  document.getElementById('level-fill').style.width = `${Math.min(prog*100,100)}%`;
+  const ld = getLevelData(state.totalClicks);
+  document.getElementById('level-text').textContent = `Уровень ${ld.level}`;
+  document.getElementById('level-next').textContent = `${ld.current.toLocaleString('ru')} / ${ld.needed.toLocaleString('ru')} кликов`;
+  document.getElementById('level-fill').style.width = `${Math.min(ld.pct*100,100)}%`;
   renderShop();
   renderStats();
 }
@@ -417,7 +441,10 @@ function switchTab(name) {
 
 // ── Лидерборд ────────────────────────────────────────────────────
 const LB_LABELS = {
-  balance:'Баланс', clicks:'Кликов', auto:'Авто/сек', achievements:'Достижений'
+  balance:'Баланс', clicks:'Кликов', auto:'Авто/сек', achievements:'Достижений', levels:'Уровень'
+};
+const LB_SUFFIX = {
+  balance:'', clicks:'', auto:'/сек', achievements:' очив', levels:' ур.'
 };
 
 function switchLbTab(cat) {
@@ -461,11 +488,11 @@ function renderLeaderboard() {
     const rank=i+1, isMe=entry.username===meUsername;
     const rankClass=rank===1?'top1':rank===2?'top2':rank===3?'top3':'';
     const medal=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank;
+    const suffix = LB_SUFFIX[lbCategory]||'';
     html+=`<div class="lb-item ${rankClass} ${isMe?'me':''}">
       <div class="lb-rank">${medal}</div>
       <div class="lb-name">@${entry.username||'Аноним'}${isMe?'<span class="lb-you">ВЫ</span>':''}</div>
-      <div class="lb-value">${formatNum(entry.value)} ${lbCategory==='achievements'?'очив':''}
-        ${lbCategory==='auto'?'/сек':''}</div>
+      <div class="lb-value">${formatNum(entry.value)}${suffix}</div>
     </div>`;
   });
   html+='</div><div class="lb-bot-hint">Рейтинг обновляется через бота (<code>/leaderboard</code>)</div>';
