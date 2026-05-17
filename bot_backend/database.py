@@ -42,10 +42,8 @@ CREATE TABLE IF NOT EXISTS referrals (
 
 
 def calc_level(total_clicks: int) -> int:
-    """Уровень 1: 0–999 кликов. Уровень N≥2: порог = 500*N."""
-    if total_clicks < 1000:
-        return 1
-    return total_clicks // 500
+    """Уровень 1 = 0–499 кликов, Уровень 2 = 500–999, и т.д. (каждые 500)."""
+    return total_clicks // 500 + 1
 
 
 async def init_db():
@@ -102,10 +100,11 @@ async def sync_progress(user_id: int, main_balance: float, click_power: float,
     computed_level = calc_level(total_clicks) if total_clicks > 0 else level
     async with aiosqlite.connect(DB_PATH) as db:
         db.row_factory = aiosqlite.Row
+        # total_clicks никогда не уменьшается — берём MAX(текущее, новое)
         await db.execute(
             """UPDATE users SET
                main_balance=?, click_power=?, auto_income=?,
-               achievements=?, total_clicks=?, level=?, last_save=?
+               achievements=?, total_clicks=MAX(total_clicks, ?), level=?, last_save=?
                WHERE user_id=?""",
             (main_balance, click_power, auto_income,
              achievements, total_clicks, computed_level, now, user_id),
