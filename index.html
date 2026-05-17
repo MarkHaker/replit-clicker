@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#0f1f14">
   <title>Кликер</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 
@@ -38,6 +38,7 @@
   </div>
 </div>
 
+<div id="app-wrapper">
 <!-- Шапка -->
 <header id="app-header">
   <div class="coin-display">
@@ -115,6 +116,24 @@
 
   <!-- Статистика -->
   <div id="tab-stats" class="tab-panel">
+    <!-- Экспорт / Импорт прогресса -->
+    <div class="progress-io-block">
+      <div class="progress-io-title">💾 Резервная копия прогресса</div>
+      <div class="progress-io-hint">
+        Сохраните код прогресса, чтобы восстановить игру на другом устройстве.
+      </div>
+      <div class="progress-io-btns">
+        <button id="btn-export" onclick="exportProgress()">📋 Экспорт (копировать код)</button>
+        <button id="btn-import" onclick="importProgress()">📥 Импорт (вставить код)</button>
+      </div>
+      <div id="export-code-area" style="display:none;margin-top:10px;">
+        <textarea readonly placeholder="Код прогресса появится здесь..."></textarea>
+      </div>
+      <div id="import-area">
+        <textarea placeholder="Вставьте сюда код прогресса..."></textarea>
+        <button id="btn-import-confirm" onclick="confirmImport()">✅ Загрузить прогресс</button>
+      </div>
+    </div>
     <div class="stat-grid">
       <div class="stat-card"><div class="stat-label">Баланс</div><div class="stat-value accent" id="stat-balance">0</div></div>
       <div class="stat-card"><div class="stat-label">Сила клика</div><div class="stat-value" id="stat-click">1</div></div>
@@ -164,9 +183,11 @@
 
 </div>
 
+</div><!-- /#app-wrapper -->
+
 <div id="toast-container"></div>
 <canvas id="confetti-canvas"></canvas>
 
-<script src="script.js?v=5"></script>
+<script src="script.js?v=6"></script>
 </body>
 </html>
