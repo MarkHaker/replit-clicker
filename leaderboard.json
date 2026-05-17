@@ -1,27 +1,43 @@
 {
-  "updated": 1779052650,
+  "updated": 1779053753,
   "balance": [
     {
       "username": "Senko_live",
-      "value": 2.881645682055468e+23
+      "value": 8.34547203992656e+117
+    },
+    {
+      "username": "Question088",
+      "value": 2.428039820526913e+108
     }
   ],
   "clicks": [
     {
       "username": "Senko_live",
-      "value": 2250
+      "value": 2356
+    },
+    {
+      "username": "Question088",
+      "value": 2293
     }
   ],
   "auto": [
     {
       "username": "Senko_live",
-      "value": 234.0
+      "value": 242.0
+    },
+    {
+      "username": "Question088",
+      "value": 242.0
     }
   ],
   "achievements": [
     {
       "username": "Senko_live",
-      "value": 28
+      "value": 30
+    },
+    {
+      "username": "Question088",
+      "value": 30
     }
   ],
   "levels": [
@@ -30,9 +46,18 @@
       "value": 4
     },
     {
+      "username": "Question088",
+      "value": 4
+    },
+    {
       "username": "I_like_pinchilin",
       "value": 1
     }
   ],
-  "referrals": []
+  "referrals": [
+    {
+      "username": "Senko_live",
+      "value": 1
+    }
+  ]
 }
