@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#0f1f14">
   <title>Кликер</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 
@@ -17,28 +17,31 @@
 <div id="offline-overlay" class="hidden">
   <div class="offline-card">
     <div class="offline-icon">
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="32" cy="32" r="30" fill="#1e4d2b" stroke="#3d9e5f" stroke-width="2"/>
-        <path d="M32 14v4M32 46v4M14 32h4M46 32h4" stroke="#7fd49a" stroke-width="2.5" stroke-linecap="round"/>
-        <circle cx="32" cy="32" r="12" fill="#3d9e5f"/>
-        <text x="32" y="37" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff" font-family="sans-serif">$</text>
-      </svg>
+      <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30" fill="#1e4d2b" stroke="#3d9e5f" stroke-width="2"/><path d="M32 14v4M32 46v4M14 32h4M46 32h4" stroke="#7fd49a" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="32" r="12" fill="#3d9e5f"/><text x="32" y="37" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff" font-family="sans-serif">$</text></svg>
     </div>
     <h2>Пока вас не было...</h2>
     <div class="bonus-amount" id="offline-amount">+0</div>
-    <p>Ваши помощники заработали монеты.<br>Забирайте!</p>
+    <p>Ваши помощники заработали монеты. Забирайте!</p>
     <button id="offline-claim-btn">Забрать бонус</button>
+  </div>
+</div>
+
+<!-- Всплывалка достижения -->
+<div id="ach-popup" class="hidden">
+  <div class="ach-popup-inner">
+    <div id="ach-popup-icon" class="ach-popup-icon"></div>
+    <div class="ach-popup-texts">
+      <div class="ach-popup-label">Достижение!</div>
+      <div id="ach-popup-name" class="ach-popup-name"></div>
+      <div id="ach-popup-reward" class="ach-popup-reward"></div>
+    </div>
   </div>
 </div>
 
 <!-- Шапка -->
 <header id="app-header">
   <div class="coin-display">
-    <svg class="coin-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="16" cy="16" r="15" fill="#2d6e45" stroke="#3d9e5f" stroke-width="1.5"/>
-      <circle cx="16" cy="16" r="10" fill="#3d9e5f"/>
-      <text x="16" y="21" text-anchor="middle" font-size="12" font-weight="bold" fill="#d4f4e2" font-family="sans-serif">$</text>
-    </svg>
+    <svg class="coin-svg" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="15" fill="#2d6e45" stroke="#3d9e5f" stroke-width="1.5"/><circle cx="16" cy="16" r="10" fill="#3d9e5f"/><text x="16" y="21" text-anchor="middle" font-size="12" font-weight="bold" fill="#d4f4e2" font-family="sans-serif">$</text></svg>
     <span class="coin-count" id="coin-count">0</span>
   </div>
   <div class="header-stats">
@@ -60,6 +63,10 @@
   <button class="tab-btn" data-tab="stats">
     <svg class="tab-svg" viewBox="0 0 24 24" fill="none"><rect x="3" y="12" width="4" height="9" rx="1" stroke="currentColor" stroke-width="2"/><rect x="10" y="7" width="4" height="14" rx="1" stroke="currentColor" stroke-width="2"/><rect x="17" y="3" width="4" height="18" rx="1" stroke="currentColor" stroke-width="2"/></svg>
     Статистика
+  </button>
+  <button class="tab-btn" data-tab="leaders">
+    <svg class="tab-svg" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7L2 9l7-1 3-6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    Топ
   </button>
 </nav>
 
@@ -85,13 +92,11 @@
         </svg>
       </button>
     </div>
-
     <div class="clicker-info">
       <div class="info-chip">+<span id="info-click">1</span> клик</div>
       <div class="info-chip"><span id="info-auto">0</span>/сек</div>
       <div class="info-chip">x<span id="info-multi">1.00</span></div>
     </div>
-
     <div class="level-progress">
       <div class="level-bar-header">
         <span id="level-text">Уровень 1</span>
@@ -111,30 +116,26 @@
   <!-- Статистика -->
   <div id="tab-stats" class="tab-panel">
     <div class="stat-grid">
-      <div class="stat-card">
-        <div class="stat-label">Баланс</div>
-        <div class="stat-value accent" id="stat-balance">0</div>
+      <div class="stat-card"><div class="stat-label">Баланс</div><div class="stat-value accent" id="stat-balance">0</div></div>
+      <div class="stat-card"><div class="stat-label">Сила клика</div><div class="stat-value" id="stat-click">1</div></div>
+      <div class="stat-card"><div class="stat-label">Авто/сек</div><div class="stat-value" id="stat-auto">0</div></div>
+      <div class="stat-card"><div class="stat-label">Множитель</div><div class="stat-value" id="stat-multi">x1.00</div></div>
+      <div class="stat-card"><div class="stat-label">Всего кликов</div><div class="stat-value" id="stat-total-clicks">0</div></div>
+      <div class="stat-card"><div class="stat-label">Заработано</div><div class="stat-value" id="stat-total-earned">0</div></div>
+    </div>
+
+    <!-- Счётчик достижений -->
+    <div class="ach-counter-block">
+      <div class="ach-counter-row">
+        <span>Обычные достижения</span>
+        <span id="ach-count-regular">0 / 36</span>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Сила клика</div>
-        <div class="stat-value" id="stat-click">1</div>
+      <div class="progress-bar"><div class="progress-fill" id="ach-fill-regular" style="width:0%"></div></div>
+      <div class="ach-counter-row" style="margin-top:8px">
+        <span>Секретные достижения</span>
+        <span id="ach-count-secret">? / ?</span>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Авто/сек</div>
-        <div class="stat-value" id="stat-auto">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Множитель</div>
-        <div class="stat-value" id="stat-multi">x1.00</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Всего кликов</div>
-        <div class="stat-value" id="stat-total-clicks">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Заработано</div>
-        <div class="stat-value" id="stat-total-earned">0</div>
-      </div>
+      <div class="progress-bar"><div class="progress-fill rainbow-bar" id="ach-fill-secret" style="width:0%"></div></div>
     </div>
 
     <div class="achievements-section">
@@ -143,10 +144,27 @@
     </div>
   </div>
 
+  <!-- Лидерборд -->
+  <div id="tab-leaders" class="tab-panel">
+    <div class="lb-sub-tabs">
+      <button class="lb-tab active" data-lb="balance">Баланс</button>
+      <button class="lb-tab" data-lb="clicks">Клики</button>
+      <button class="lb-tab" data-lb="auto">Авто/сек</button>
+      <button class="lb-tab" data-lb="achievements">Очивки</button>
+    </div>
+    <div id="lb-content">
+      <div class="lb-loading">Загрузка...</div>
+    </div>
+    <div class="lb-footer">
+      <span id="lb-updated"></span>
+      <button id="lb-refresh-btn" onclick="loadLeaderboard(true)">Обновить</button>
+    </div>
+  </div>
+
 </div>
 
 <div id="toast-container"></div>
 
-<script src="script.js?v=3"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>
