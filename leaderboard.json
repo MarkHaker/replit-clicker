@@ -1,9 +1,24 @@
 {
-  "updated": 1779050948,
-  "balance": [],
-  "clicks": [],
+  "updated": 1779051376,
+  "balance": [
+    {
+      "username": "Senko_live",
+      "value": 5827.0
+    }
+  ],
+  "clicks": [
+    {
+      "username": "Senko_live",
+      "value": 522
+    }
+  ],
   "auto": [],
-  "achievements": [],
+  "achievements": [
+    {
+      "username": "Senko_live",
+      "value": 7
+    }
+  ],
   "levels": [
     {
       "username": "I_like_pinchilin",
