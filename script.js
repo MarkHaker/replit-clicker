@@ -141,6 +141,12 @@ function _showNextAch() {
 }
 
 // ── Конфиг улучшений ──────────────────────────────────────────────
+// Мультипликаторы цены по категориям (сбалансированные):
+//   click: ×1.50 — умеренный рост (основа геймплея)
+//   auto:  ×1.40 — медленнее, т.к. пассивный доход
+//   multi: ×1.60 — дороже всего, т.к. глобальный бонус
+const COST_MULT = { click: 1.50, auto: 1.40, multi: 1.60 };
+
 const UPGRADES = {
   click:[
     {id:'click1',name:'Острые когти',  icon:'🦅',desc:'+2 к силе клика', baseCost:50,   effect:2,  category:'click'},
@@ -167,26 +173,26 @@ const UPGRADES = {
 
 const ACHIEVEMENTS = [
   // === КЛИКИ ===
-  {id:'a01',name:'Первое прикосновение',icon:'👆',desc:'Сделай 1 клик',         reward:{type:'coins',val:10},    check:s=>s.totalClicks>=1},
-  {id:'a02',name:'Тепло рук',           icon:'🤲',desc:'10 кликов',            reward:{type:'coins',val:50},    check:s=>s.totalClicks>=10},
-  {id:'a03',name:'Кликоман',            icon:'🔥',desc:'100 кликов',           reward:{type:'coins',val:200},   check:s=>s.totalClicks>=100},
-  {id:'a04',name:'Машина кликов',       icon:'⚙️',desc:'1 000 кликов',        reward:{type:'coins',val:1000},  check:s=>s.totalClicks>=1000},
+  {id:'a01',name:'Первое прикосновение',icon:'👆',desc:'Сделай 1 клик',         reward:{type:'coins',val:5},     check:s=>s.totalClicks>=1},
+  {id:'a02',name:'Тепло рук',           icon:'🤲',desc:'10 кликов',            reward:{type:'coins',val:25},    check:s=>s.totalClicks>=10},
+  {id:'a03',name:'Кликоман',            icon:'🔥',desc:'100 кликов',           reward:{type:'coins',val:100},   check:s=>s.totalClicks>=100},
+  {id:'a04',name:'Машина кликов',       icon:'⚙️',desc:'1 000 кликов',        reward:{type:'coins',val:500},   check:s=>s.totalClicks>=1000},
   {id:'a05',name:'Клик-мастер',         icon:'💪',desc:'10 000 кликов',        reward:{type:'click',val:1},     check:s=>s.totalClicks>=10000},
   {id:'a06',name:'Легенда кликера',     icon:'🏅',desc:'100 000 кликов',       reward:{type:'click',val:3},     check:s=>s.totalClicks>=100000},
   {id:'a07',name:'Миллион касаний',     icon:'💎',desc:'1 000 000 кликов',     reward:{type:'click',val:10},    check:s=>s.totalClicks>=1000000},
 
   // === БАЛАНС / ЗАРАБОТОК ===
-  {id:'b01',name:'Первые монеты',   icon:'🌱',desc:'Заработай 500 монет',        reward:{type:'coins',val:100},   check:s=>s.totalEarned>=500},
-  {id:'b02',name:'Тысячник',        icon:'🏆',desc:'Заработай 1 000 монет',      reward:{type:'coins',val:500},   check:s=>s.totalEarned>=1000},
-  {id:'b03',name:'Капиталист',      icon:'💰',desc:'Заработай 10 000 монет',     reward:{type:'coins',val:2000},  check:s=>s.totalEarned>=10000},
-  {id:'b04',name:'Богач',           icon:'🤑',desc:'Заработай 100 000 монет',    reward:{type:'coins',val:10000}, check:s=>s.totalEarned>=100000},
+  {id:'b01',name:'Первые монеты',   icon:'🌱',desc:'Заработай 500 монет',        reward:{type:'coins',val:50},    check:s=>s.totalEarned>=500},
+  {id:'b02',name:'Тысячник',        icon:'🏆',desc:'Заработай 1 000 монет',      reward:{type:'coins',val:250},   check:s=>s.totalEarned>=1000},
+  {id:'b03',name:'Капиталист',      icon:'💰',desc:'Заработай 10 000 монет',     reward:{type:'coins',val:1000},  check:s=>s.totalEarned>=10000},
+  {id:'b04',name:'Богач',           icon:'🤑',desc:'Заработай 100 000 монет',    reward:{type:'coins',val:5000},  check:s=>s.totalEarned>=100000},
   {id:'b05',name:'Миллионер',       icon:'🌟',desc:'Заработай 1 000 000 монет',  reward:{type:'auto', val:1},     check:s=>s.totalEarned>=1000000},
   {id:'b06',name:'Мультимиллионер', icon:'👑',desc:'Заработай 10M монет',        reward:{type:'auto', val:5},     check:s=>s.totalEarned>=10000000},
   {id:'b07',name:'Биллионер',       icon:'🔱',desc:'Заработай 1B монет',         reward:{type:'auto', val:25},    check:s=>s.totalEarned>=1000000000},
 
   // === МАГАЗИН / УЛУЧШЕНИЯ ===
-  {id:'u01',name:'Первая покупка',  icon:'🛒',desc:'Купи 1 улучшение',            reward:{type:'coins',val:100},   check:s=>totalUpgrades(s)>=1},
-  {id:'u02',name:'Коллекционер',   icon:'🗂️',desc:'Купи 5 улучшений суммарно',  reward:{type:'coins',val:500},   check:s=>totalUpgrades(s)>=5},
+  {id:'u01',name:'Первая покупка',  icon:'🛒',desc:'Купи 1 улучшение',            reward:{type:'coins',val:50},    check:s=>totalUpgrades(s)>=1},
+  {id:'u02',name:'Коллекционер',   icon:'🗂️',desc:'Купи 5 улучшений суммарно',  reward:{type:'coins',val:250},   check:s=>totalUpgrades(s)>=5},
   {id:'u03',name:'Шоппер',         icon:'🏪',desc:'Купи 20 улучшений суммарно',  reward:{type:'click',val:2},     check:s=>totalUpgrades(s)>=20},
   {id:'u04',name:'Магнат',         icon:'🏦',desc:'Купи 50 улучшений суммарно',  reward:{type:'click',val:5},     check:s=>totalUpgrades(s)>=50},
   {id:'u05',name:'Монополист',     icon:'🌐',desc:'Купи 100 улучшений суммарно', reward:{type:'click',val:15},    check:s=>totalUpgrades(s)>=100},
@@ -199,29 +205,29 @@ const ACHIEVEMENTS = [
   {id:'i05',name:'Гиперимперия',   icon:'🌌',desc:'Авто-доход 1 000/сек',        reward:{type:'auto', val:100},   check:s=>s.autoIncome>=1000},
 
   // === МНОЖИТЕЛЬ ===
-  {id:'m01',name:'Ускорение',     icon:'🚀',desc:'Множитель x1.5',               reward:{type:'coins',val:1000},  check:s=>s.multiplier>=1.5},
-  {id:'m02',name:'Турбо',         icon:'⚡',desc:'Множитель x3',                 reward:{type:'coins',val:5000},  check:s=>s.multiplier>=3},
+  {id:'m01',name:'Ускорение',     icon:'🚀',desc:'Множитель x1.5',               reward:{type:'coins',val:500},   check:s=>s.multiplier>=1.5},
+  {id:'m02',name:'Турбо',         icon:'⚡',desc:'Множитель x3',                 reward:{type:'coins',val:2500},  check:s=>s.multiplier>=3},
   {id:'m03',name:'Гиперскорость', icon:'🌀',desc:'Множитель x6',                 reward:{type:'click',val:5},     check:s=>s.multiplier>=6},
   {id:'m04',name:'Бесконечность', icon:'♾️',desc:'Множитель x12',               reward:{type:'auto', val:10},    check:s=>s.multiplier>=12},
 
   // === УРОВНИ ===
-  {id:'l01',name:'Новобранец',  icon:'🌿',desc:'Достигни 5 уровня',              reward:{type:'coins',val:500},   check:s=>getLevel(s)>=5},
-  {id:'l02',name:'Опытный',     icon:'🌳',desc:'Достигни 10 уровня',             reward:{type:'coins',val:2000},  check:s=>getLevel(s)>=10},
+  {id:'l01',name:'Новобранец',  icon:'🌿',desc:'Достигни 5 уровня',              reward:{type:'coins',val:250},   check:s=>getLevel(s)>=5},
+  {id:'l02',name:'Опытный',     icon:'🌳',desc:'Достигни 10 уровня',             reward:{type:'coins',val:1000},  check:s=>getLevel(s)>=10},
   {id:'l03',name:'Ветеран',     icon:'🏔️',desc:'Достигни 25 уровня',           reward:{type:'click',val:3},     check:s=>getLevel(s)>=25},
   {id:'l04',name:'Элита',       icon:'🦁',desc:'Достигни 50 уровня',             reward:{type:'click',val:8},     check:s=>getLevel(s)>=50},
   {id:'l05',name:'Легенда',     icon:'🌠',desc:'Достигни 100 уровня',            reward:{type:'auto', val:15},    check:s=>getLevel(s)>=100},
 
   // === ПРОГРЕСС ДОСТИЖЕНИЙ ===
-  {id:'ac1',name:'На пути',    icon:'🗺️',desc:'Получи 5 достижений',            reward:{type:'coins',val:2000},  check:s=>countUnlocked(s,'regular')>=5},
-  {id:'ac2',name:'Охотник',    icon:'🎯',desc:'Получи 15 достижений',            reward:{type:'coins',val:10000}, check:s=>countUnlocked(s,'regular')>=15},
+  {id:'ac1',name:'На пути',    icon:'🗺️',desc:'Получи 5 достижений',            reward:{type:'coins',val:1000},  check:s=>countUnlocked(s,'regular')>=5},
+  {id:'ac2',name:'Охотник',    icon:'🎯',desc:'Получи 15 достижений',            reward:{type:'coins',val:5000},  check:s=>countUnlocked(s,'regular')>=15},
   {id:'ac3',name:'Коллекция',  icon:'🎖️',desc:'Получи 28 достижений',          reward:{type:'auto', val:5},     check:s=>countUnlocked(s,'regular')>=28},
 
   // === СЕКРЕТНЫЕ ===
-  {id:'s01',name:'Ночной кликер',   icon:'🌙',desc:'Играй с полуночи до 4 утра',   reward:{type:'coins',val:2000},  check:s=>s.flags.playedAtNight,  secret:true},
-  {id:'s02',name:'Ранняя пташка',   icon:'🌅',desc:'Войди в игру в 5–7 утра',      reward:{type:'coins',val:1500},  check:s=>s.flags.playedEarlyMorn,secret:true},
+  {id:'s01',name:'Ночной кликер',   icon:'🌙',desc:'Играй с полуночи до 4 утра',   reward:{type:'coins',val:1000},  check:s=>s.flags.playedAtNight,  secret:true},
+  {id:'s02',name:'Ранняя пташка',   icon:'🌅',desc:'Войди в игру в 5–7 утра',      reward:{type:'coins',val:750},   check:s=>s.flags.playedEarlyMorn,secret:true},
   {id:'s03',name:'Скоростной',      icon:'⚡',desc:'20 кликов за 3 секунды',       reward:{type:'click',val:5},     check:s=>s.flags.rapidClick,     secret:true},
   {id:'s04',name:'Терпеливый',      icon:'⏳',desc:'Забери оффлайн-бонус за 8ч+', reward:{type:'auto', val:8},     check:s=>s.flags.longOffline,    secret:true},
-  {id:'s05',name:'Искатель секретов',icon:'🔑',desc:'Открой 3 секретных достижения',reward:{type:'coins',val:15000}, check:s=>countUnlocked(s,'secret')>=3,secret:true},
+  {id:'s05',name:'Искатель секретов',icon:'🔑',desc:'Открой 3 секретных достижения',reward:{type:'coins',val:7500},  check:s=>countUnlocked(s,'secret')>=3,secret:true},
   {id:'s06',name:'Перфекционист',   icon:'💠',desc:'Открой все 36 обычных достижений',reward:{type:'click',val:25}, check:s=>countUnlocked(s,'regular')>=36,secret:true},
 ];
 
@@ -309,7 +315,8 @@ function calcOfflineBonus() {
 
 // ── Игровая механика ──────────────────────────────────────────────
 function upgradeCost(upg) {
-  return Math.floor(upg.baseCost * Math.pow(1.65, state.upgrades[upg.id]||0));
+  const mult = COST_MULT[upg.category] || 1.50;
+  return Math.floor(upg.baseCost * Math.pow(mult, state.upgrades[upg.id]||0));
 }
 
 function recalcStats() {
@@ -394,6 +401,60 @@ function checkAllAchievements() {
     }
   }
   if(anyNew){ saveGame(); updateAchStats(); }
+}
+
+// ── Экспорт / Импорт прогресса ────────────────────────────────────
+function exportProgress() {
+  try {
+    const data = JSON.stringify(state);
+    const b64  = btoa(unescape(encodeURIComponent(data)));
+    // Копируем в буфер обмена
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(b64).then(() => {
+        showToast('Код прогресса скопирован! Сохраните его в надёжном месте.');
+      }).catch(() => _showExportFallback(b64));
+    } else {
+      _showExportFallback(b64);
+    }
+  } catch(e) { showToast('Ошибка экспорта'); }
+}
+
+function _showExportFallback(b64) {
+  const ta = document.getElementById('export-code-area');
+  if (!ta) return;
+  ta.style.display = 'block';
+  ta.querySelector('textarea').value = b64;
+  ta.querySelector('textarea').select();
+  showToast('Скопируйте код из поля ниже');
+}
+
+function importProgress() {
+  const area = document.getElementById('import-area');
+  if (!area) return;
+  area.style.display = area.style.display === 'none' ? 'block' : 'none';
+}
+
+function confirmImport() {
+  try {
+    const ta  = document.querySelector('#import-area textarea');
+    const raw = ta ? ta.value.trim() : '';
+    if (!raw) { showToast('Вставьте код прогресса'); return; }
+    const json   = decodeURIComponent(escape(atob(raw)));
+    const parsed = JSON.parse(json);
+    if (typeof parsed.balance === 'undefined') throw new Error('bad');
+    state = { ...defaultState(), ...parsed };
+    if (!state.flags)  state.flags  = {playedAtNight:false,playedEarlyMorn:false,rapidClick:false,longOffline:false};
+    if (!state.claimed) state.claimed = [];
+    recalcStats();
+    saveGame();
+    updateUI();
+    document.getElementById('import-area').style.display = 'none';
+    ta.value = '';
+    showToast('Прогресс успешно загружен!');
+    haptic('heavy');
+  } catch(e) {
+    showToast('Неверный код — проверьте и повторите');
+  }
 }
 
 // ── Синхронизация с ботом ─────────────────────────────────────────
