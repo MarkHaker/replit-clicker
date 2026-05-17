@@ -2,150 +2,151 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <!-- cache-control: принудительное обновление на GitHub Pages -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>🪙 Кликер</title>
-
-  <!-- Telegram WebApp SDK (обязательно до всего остального) -->
+  <meta name="theme-color" content="#0f1f14">
+  <title>Кликер</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-  <!-- Стили (версионирование через ?v= для обхода кэша GitHub Pages) -->
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════════════
-     Оверлей: оффлайн-бонус
-     ══════════════════════════════════════════════════════════════ -->
+<!-- Оффлайн-бонус -->
 <div id="offline-overlay" class="hidden">
   <div class="offline-card">
-    <h2>🌙 Пока вас не было...</h2>
-    <div class="bonus-amount" id="offline-amount">+0 🪙</div>
-    <p>Ваши помощники не теряли времени.<br>Забирайте монеты!</p>
+    <div class="offline-icon">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="30" fill="#1e4d2b" stroke="#3d9e5f" stroke-width="2"/>
+        <path d="M32 14v4M32 46v4M14 32h4M46 32h4" stroke="#7fd49a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="32" cy="32" r="12" fill="#3d9e5f"/>
+        <text x="32" y="37" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff" font-family="sans-serif">$</text>
+      </svg>
+    </div>
+    <h2>Пока вас не было...</h2>
+    <div class="bonus-amount" id="offline-amount">+0</div>
+    <p>Ваши помощники заработали монеты.<br>Забирайте!</p>
     <button id="offline-claim-btn">Забрать бонус</button>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     Шапка: баланс + мини-статистика
-     ══════════════════════════════════════════════════════════════ -->
+<!-- Шапка -->
 <header id="app-header">
   <div class="coin-display">
-    <span class="coin-icon">🪙</span>
+    <svg class="coin-svg" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="16" cy="16" r="15" fill="#2d6e45" stroke="#3d9e5f" stroke-width="1.5"/>
+      <circle cx="16" cy="16" r="10" fill="#3d9e5f"/>
+      <text x="16" y="21" text-anchor="middle" font-size="12" font-weight="bold" fill="#d4f4e2" font-family="sans-serif">$</text>
+    </svg>
     <span class="coin-count" id="coin-count">0</span>
   </div>
   <div class="header-stats">
-    <div class="header-stat">👆 <span id="header-click">1</span>/клик</div>
-    <div class="header-stat">⚡ <span id="header-cps">0</span>/сек</div>
+    <div class="header-stat">+ <span id="header-click">1</span>/клик</div>
+    <div class="header-stat">&#9889; <span id="header-cps">0</span>/сек</div>
   </div>
 </header>
 
-<!-- ══════════════════════════════════════════════════════════════
-     Навигация по вкладкам
-     ══════════════════════════════════════════════════════════════ -->
+<!-- Вкладки -->
 <nav id="tabs-nav">
   <button class="tab-btn active" data-tab="clicker">
-    <span class="tab-icon">🖱️</span>
+    <svg class="tab-svg" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     Кликер
   </button>
   <button class="tab-btn" data-tab="shop">
-    <span class="tab-icon">🛒</span>
+    <svg class="tab-svg" viewBox="0 0 24 24" fill="none"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/><path d="M16 10a4 4 0 01-8 0" stroke="currentColor" stroke-width="2"/></svg>
     Магазин
   </button>
   <button class="tab-btn" data-tab="stats">
-    <span class="tab-icon">📊</span>
+    <svg class="tab-svg" viewBox="0 0 24 24" fill="none"><rect x="3" y="12" width="4" height="9" rx="1" stroke="currentColor" stroke-width="2"/><rect x="10" y="7" width="4" height="14" rx="1" stroke="currentColor" stroke-width="2"/><rect x="17" y="3" width="4" height="18" rx="1" stroke="currentColor" stroke-width="2"/></svg>
     Статистика
   </button>
 </nav>
 
-<!-- ══════════════════════════════════════════════════════════════
-     Контент вкладок
-     ══════════════════════════════════════════════════════════════ -->
+<!-- Контент -->
 <div id="tab-content">
 
-  <!-- ── Вкладка: Кликер ──────────────────────────────────────── -->
+  <!-- Кликер -->
   <div id="tab-clicker" class="tab-panel active">
-
     <div class="click-area">
-      <button id="click-btn" aria-label="Кликнуть">🪙</button>
+      <button id="click-btn" aria-label="Кликнуть">
+        <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="60" r="54" fill="url(#coinGrad)" stroke="rgba(255,255,255,0.2)" stroke-width="3"/>
+          <circle cx="60" cy="60" r="40" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+          <text x="60" y="76" text-anchor="middle" font-size="44" font-weight="900" fill="#d4f4e2" font-family="-apple-system,sans-serif" opacity="0.95">$</text>
+          <ellipse cx="44" cy="44" rx="12" ry="6" fill="rgba(255,255,255,0.18)" transform="rotate(-30 44 44)"/>
+          <defs>
+            <radialGradient id="coinGrad" cx="35%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#5dc987"/>
+              <stop offset="60%" stop-color="#3d9e5f"/>
+              <stop offset="100%" stop-color="#1e5c38"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      </button>
     </div>
 
     <div class="clicker-info">
-      <p>👆 Сила клика: <span id="info-click">1</span></p>
-      <p>⚡ Авто-доход: <span id="info-auto">0</span>/сек</p>
-      <p>✖️ Множитель: <span id="info-multi">×1.00</span></p>
+      <div class="info-chip">+<span id="info-click">1</span> клик</div>
+      <div class="info-chip"><span id="info-auto">0</span>/сек</div>
+      <div class="info-chip">x<span id="info-multi">1.00</span></div>
     </div>
 
     <div class="level-progress">
       <div class="level-bar-header">
         <span id="level-text">Уровень 1</span>
-        <span id="level-next">0 / 1,000</span>
+        <span id="level-next">0 / 1 000</span>
       </div>
       <div class="progress-bar">
         <div class="progress-fill" id="level-fill" style="width:0%"></div>
       </div>
     </div>
-
   </div>
 
-  <!-- ── Вкладка: Магазин ─────────────────────────────────────── -->
+  <!-- Магазин -->
   <div id="tab-shop" class="tab-panel">
-    <div id="shop-content">
-      <!-- Заполняется через renderShop() в JS -->
-    </div>
+    <div id="shop-content"></div>
   </div>
 
-  <!-- ── Вкладка: Статистика ──────────────────────────────────── -->
+  <!-- Статистика -->
   <div id="tab-stats" class="tab-panel">
-
     <div class="stat-grid">
       <div class="stat-card">
-        <div class="stat-label">💰 Баланс</div>
-        <div class="stat-value" id="stat-balance">0</div>
+        <div class="stat-label">Баланс</div>
+        <div class="stat-value accent" id="stat-balance">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">👆 Сила клика</div>
-        <div class="stat-value blue" id="stat-click">1</div>
+        <div class="stat-label">Сила клика</div>
+        <div class="stat-value" id="stat-click">1</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">⚡ Авто/сек</div>
-        <div class="stat-value green" id="stat-auto">0</div>
+        <div class="stat-label">Авто/сек</div>
+        <div class="stat-value" id="stat-auto">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">✖️ Множитель</div>
-        <div class="stat-value" id="stat-multi">×1.00</div>
+        <div class="stat-label">Множитель</div>
+        <div class="stat-value" id="stat-multi">x1.00</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">🖱️ Всего кликов</div>
-        <div class="stat-value blue" id="stat-total-clicks">0</div>
+        <div class="stat-label">Всего кликов</div>
+        <div class="stat-value" id="stat-total-clicks">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">🏦 Всего заработано</div>
+        <div class="stat-label">Заработано</div>
         <div class="stat-value" id="stat-total-earned">0</div>
       </div>
     </div>
 
     <div class="achievements-section">
-      <h3>🏆 Достижения</h3>
-      <div id="achievements-list">
-        <!-- Заполняется через checkAchievements() в JS -->
-      </div>
+      <h3>Достижения</h3>
+      <div id="achievements-list"></div>
     </div>
-
   </div>
 
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     Тост-уведомления
-     ══════════════════════════════════════════════════════════════ -->
 <div id="toast-container"></div>
 
-<!-- Скрипт (версионирование для обхода кэша) -->
-<script src="script.js?v=2"></script>
-
+<script src="script.js?v=3"></script>
 </body>
 </html>
