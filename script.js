@@ -11,6 +11,135 @@ const LB_URL       = 'https://raw.githubusercontent.com/MarkHaker/replit-clicker
 
 function haptic(t='light') { tg?.HapticFeedback?.impactOccurred(t); }
 
+// ── Звуки (Web Audio API, без внешних файлов) ─────────────────────
+let _audioCtx = null;
+function getACtx() {
+  if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_audioCtx.state === 'suspended') _audioCtx.resume();
+  return _audioCtx;
+}
+
+function playPop() {
+  try {
+    const ctx = getACtx(), now = ctx.currentTime;
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(700, now);
+    osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+    osc.start(now); osc.stop(now + 0.13);
+  } catch(e) {}
+}
+
+function playUIClick() {
+  try {
+    const ctx = getACtx(), now = ctx.currentTime;
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(1100, now);
+    osc.frequency.exponentialRampToValueAtTime(550, now + 0.04);
+    gain.gain.setValueAtTime(0.06, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+    osc.start(now); osc.stop(now + 0.06);
+  } catch(e) {}
+}
+
+function playAchChime(isSecret = false) {
+  try {
+    const ctx = getACtx();
+    // обычное: C5-E5-G5; секретное: C5-E5-G5-C6-E6 (квинтет, ярче)
+    const freqs = isSecret ? [523, 659, 784, 1047, 1319] : [523, 659, 784];
+    freqs.forEach((f, i) => {
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = f;
+      const t = ctx.currentTime + i * 0.13;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(isSecret ? 0.22 : 0.17, t + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.48);
+      osc.start(t); osc.stop(t + 0.48);
+    });
+  } catch(e) {}
+}
+
+// ── Конфетти ──────────────────────────────────────────────────────
+function spawnConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  if (!canvas) return;
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.display = 'block';
+  const ctx = canvas.getContext('2d');
+  const COLS = ['#ff6b6b','#ffd700','#7fd49a','#4fc3f7','#b39ddb','#ff6b9d','#ff9f43','#26de81'];
+  const pts  = Array.from({length:100}, () => ({
+    x:  Math.random() * canvas.width,
+    y:  -20 - Math.random() * 60,
+    vx: (Math.random() - 0.5) * 5,
+    vy: Math.random() * 3 + 1.5,
+    w:  Math.random() * 10 + 5,
+    h:  Math.random() * 6  + 4,
+    r:  Math.random() * Math.PI * 2,
+    dr: (Math.random() - 0.5) * 0.14,
+    c:  COLS[Math.floor(Math.random() * COLS.length)],
+    life: 1,
+  }));
+  let raf;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let any = false;
+    for (const p of pts) {
+      p.x += p.vx; p.y += p.vy;
+      p.vy += 0.07; p.r += p.dr; p.life -= 0.007;
+      if (p.life > 0 && p.y < canvas.height + 20) {
+        any = true;
+        ctx.save();
+        ctx.translate(p.x, p.y); ctx.rotate(p.r);
+        ctx.globalAlpha = Math.min(p.life, 1);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+      }
+    }
+    if (any) raf = requestAnimationFrame(draw);
+    else canvas.style.display = 'none';
+  }
+  cancelAnimationFrame(raf);
+  draw();
+}
+
+// ── Очередь уведомлений о достижениях ────────────────────────────
+let _achQueue = [], _achShowing = false;
+
+function queueAchievement(ach, rewardMsg) {
+  _achQueue.push({ach, rewardMsg});
+  if (!_achShowing) _showNextAch();
+}
+
+function _showNextAch() {
+  if (!_achQueue.length) { _achShowing = false; return; }
+  _achShowing = true;
+  const {ach, rewardMsg} = _achQueue.shift();
+  const popup = document.getElementById('ach-popup');
+  document.getElementById('ach-popup-icon').textContent   = ach.icon;
+  document.getElementById('ach-popup-name').textContent   = ach.name;
+  document.getElementById('ach-popup-reward').textContent = `Награда: ${rewardMsg}`;
+  // Секретные — радужная рамка + конфетти
+  popup.className = ach.secret ? 'secret' : '';
+  popup.classList.remove('hidden');
+  playAchChime(ach.secret);
+  haptic('heavy');
+  if (ach.secret) spawnConfetti();
+  clearTimeout(popup._t);
+  popup._t = setTimeout(() => {
+    popup.classList.add('hidden');
+    setTimeout(_showNextAch, 350);
+  }, 3800);
+}
+
 // ── Конфиг улучшений ──────────────────────────────────────────────
 const UPGRADES = {
   click:[
@@ -214,6 +343,7 @@ function handleClick(e) {
   state.totalClicks   += 1;
   state.totalEarned   += earned;
   state.sessionClicks += 1;
+  playPop();
   haptic('light');
   spawnFloatNumber(e, `+${formatNum(earned)}`);
   updateUI();
@@ -259,23 +389,11 @@ function checkAllAchievements() {
     if(ach.check(state)){
       state.claimed.push(ach.id);
       const rewardMsg = applyReward(ach.reward);
-      showAchievementPopup(ach, rewardMsg);
+      queueAchievement(ach, rewardMsg);
       anyNew=true;
     }
   }
   if(anyNew){ saveGame(); updateAchStats(); }
-}
-
-function showAchievementPopup(ach, rewardMsg) {
-  const popup = document.getElementById('ach-popup');
-  document.getElementById('ach-popup-icon').textContent   = ach.icon;
-  document.getElementById('ach-popup-name').textContent   = ach.name;
-  document.getElementById('ach-popup-reward').textContent = `Награда: ${rewardMsg}`;
-  popup.className = ach.secret ? 'secret' : '';
-  popup.classList.remove('hidden');
-  haptic('heavy');
-  clearTimeout(popup._timer);
-  popup._timer = setTimeout(()=>popup.classList.add('hidden'), 3500);
 }
 
 // ── Синхронизация с ботом ─────────────────────────────────────────
@@ -548,6 +666,12 @@ function init() {
   document.querySelectorAll('.lb-tab').forEach(b=>{
     b.addEventListener('click',()=>switchLbTab(b.dataset.lb));
   });
+
+  // Звук щелчка на все кнопки кроме главной монеты
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (btn && btn.id !== 'click-btn') playUIClick();
+  }, {passive: true});
 
   autoTickInterval = setInterval(autoTick, 1000);
   autoSaveInterval = setInterval(saveGame, 30_000);
