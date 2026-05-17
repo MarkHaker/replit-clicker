@@ -139,14 +139,14 @@ body {
   border-bottom: 1px solid var(--border);
 }
 .tab-btn {
-  flex: 1; padding: 9px 0;
+  flex: 1; padding: 8px 0;
   background: none; border: none;
   color: var(--text-dim);
   font-size: 0.7rem; font-weight: 600;
   cursor: pointer;
   display: flex; flex-direction: column; align-items: center; gap: 3px;
   transition: color var(--tr);
-  position: relative; min-height: 50px;
+  position: relative;
   touch-action: manipulation;
 }
 .tab-svg { width: 18px; height: 18px; }
@@ -450,56 +450,6 @@ body {
   100% { box-shadow: 0 0 0 2px #ff6b6b; }
 }
 
-/* ── Экспорт / Импорт прогресса ──────────────────────────────────── */
-.progress-io-block {
-  background: var(--bg2); border-radius: var(--radius);
-  padding: 14px; margin-bottom: 14px; border: 1px solid var(--border);
-}
-.progress-io-title {
-  font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.09em; color: var(--green-light); opacity: 0.75;
-  margin-bottom: 10px;
-}
-.progress-io-hint {
-  font-size: 0.75rem; color: var(--text-dim); line-height: 1.5; margin-bottom: 10px;
-}
-.progress-io-btns {
-  display: flex; gap: 8px; flex-wrap: wrap;
-}
-.progress-io-btns button {
-  flex: 1; min-width: 120px; padding: 10px 8px;
-  border: 1px solid var(--border); border-radius: 10px;
-  font-size: 0.8rem; font-weight: 700; cursor: pointer;
-  transition: all var(--tr); touch-action: manipulation;
-}
-#btn-export {
-  background: var(--green); color: #fff; border-color: var(--green);
-}
-#btn-export:active { background: var(--green-dim); transform: scale(0.96); }
-#btn-import {
-  background: var(--bg3); color: var(--text);
-}
-#btn-import:active { background: var(--green); color: #fff; border-color: var(--green); transform: scale(0.96); }
-
-#import-area {
-  display: none; margin-top: 10px;
-}
-#import-area textarea {
-  width: 100%; height: 72px; padding: 8px 10px;
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: 8px; color: var(--text);
-  font-size: 0.78rem; font-family: monospace; resize: none;
-  outline: none;
-}
-#import-area textarea:focus { border-color: var(--border-hi); }
-#btn-import-confirm {
-  width: 100%; margin-top: 8px; padding: 10px;
-  background: var(--green); color: #fff;
-  border: none; border-radius: 10px;
-  font-size: 0.85rem; font-weight: 700; cursor: pointer;
-  transition: all var(--tr); touch-action: manipulation;
-}
-#btn-import-confirm:active { background: var(--green-dim); transform: scale(0.96); }
 
 /* ── Адаптивный дизайн — медиа-запросы ───────────────────────────── */
 
