@@ -159,7 +159,8 @@ body {
 
 /* ── Контент ─────────────────────────────────────────────────────── */
 #tab-content {
-  height: calc(100dvh - 102px);
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
@@ -170,7 +171,7 @@ body {
 /* ── Кликер ──────────────────────────────────────────────────────── */
 #tab-clicker {
   display: flex; flex-direction: column;
-  align-items: center;
+  align-items: center; justify-content: center;
   padding: 12px 16px 24px; min-height: 100%;
 }
 .click-area { position: relative; margin: 8px 0 6px; }
